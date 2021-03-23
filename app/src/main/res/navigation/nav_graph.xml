@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/quotesFragment">
+
+    <fragment
+        android:id="@+id/quotesFragment"
+        android:name="com.tanmay.quotes.ui.quotesFragment.QuotesFragment"
+        android:label="fragment_quotes"
+        tools:layout="@layout/fragment_quotes" >
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedQuoteFragment"
+        android:name="com.tanmay.quotes.ui.savedQuotesFragment.SavedQuoteFragment"
+        android:label="fragment_saved_quote"
+        tools:layout="@layout/fragment_saved_quote" >
+
+    </fragment>
+
+
+</navigation>
