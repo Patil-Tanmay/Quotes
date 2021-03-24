@@ -3,7 +3,7 @@
 **Quotes** is an Android application 📱 built to demonstrate use of *Modern Android development* tools.
 
 
-***You can Install and test latest Quotes app from below***
+***You can Install latest Quotes app from below***
 
 [![Quotes App](https://img.shields.io/badge/❝Quotes❞-APK-blue.svg?style=for-the-badge&logo=android&color=blue)](https://drive.google.com/file/d/13cuMOa0_o_nxy7L5FHOUpw94GqPakQLI/view?usp=sharing)
  
