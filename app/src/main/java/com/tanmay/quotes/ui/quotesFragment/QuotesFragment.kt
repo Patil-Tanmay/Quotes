@@ -87,4 +87,9 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         _binding = null
     }
 
+<<<<<<< HEAD
 }
+=======
+
+}
+>>>>>>> a563fdee7af1f55bc9f091c1f3fbde44a669932c
