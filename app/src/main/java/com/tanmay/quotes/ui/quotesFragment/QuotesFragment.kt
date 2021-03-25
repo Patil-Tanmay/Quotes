@@ -89,7 +89,3 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
 
 }
-
-
-}
-
