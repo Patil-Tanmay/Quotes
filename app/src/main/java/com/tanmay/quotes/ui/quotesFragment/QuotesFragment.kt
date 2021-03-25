@@ -73,24 +73,17 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes){
 
 
     override fun onResume() {
-        Log.d(TAG,"Resume Shimmering Started")
         binding.shimmerLayout.startShimmer()
         super.onResume()
-        adapter.notifyDataSetChanged()
-
-
     }
 
     override fun onPause() {
-        Log.d(TAG,"(Pause) Shimmering Stoppped")
         binding.shimmerLayout.stopShimmer()
         super.onPause()
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy: Shimering Stopped")
         super.onDestroy()
-        binding.shimmerLayout.stopShimmer()
         _binding = null
     }
 
