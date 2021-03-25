@@ -15,7 +15,7 @@ class SavedQuotesAdapter(val onBookmarkClick: (QuotesData) -> Unit) :
 
     private val differCallBack = object : DiffUtil.ItemCallback<QuotesData>() {
         override fun areItemsTheSame(oldItem: QuotesData, newItem: QuotesData): Boolean {
-            return oldItem._id == newItem._id
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: QuotesData, newItem: QuotesData): Boolean {

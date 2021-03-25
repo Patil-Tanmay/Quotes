@@ -2,6 +2,7 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -9,8 +10,9 @@ import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.ItemQuoteBinding
 
-class QuotesAdapter(val onBookMarkClick: (QuotesData) -> Unit) :
-    PagingDataAdapter<QuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
+class QuotesAdapter(
+    val onBookMarkClick: (QuotesData) -> Unit,
+) : PagingDataAdapter<QuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
     override fun onBindViewHolder(holder: QuotesViewHolder, position: Int) {
@@ -23,17 +25,19 @@ class QuotesAdapter(val onBookMarkClick: (QuotesData) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuotesViewHolder {
         val binding = ItemQuoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return QuotesViewHolder(binding, onBookMarkClick = { position ->
-            val qData = getItem(position)
-            if (qData != null) {
-                onBookMarkClick(qData)
-            }
-        })
+        return QuotesViewHolder(
+            binding,
+            onBookMarkClick = { position ->
+                val qData = getItem(position)
+                if (qData != null) {
+                    onBookMarkClick(qData)
+                }
+            })
     }
 
     inner class QuotesViewHolder(
-        val binding: ItemQuoteBinding,
-        val onBookMarkClick: (Int) -> Unit
+        private val binding: ItemQuoteBinding,
+        val onBookMarkClick: (Int) -> Unit,
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -41,7 +45,7 @@ class QuotesAdapter(val onBookMarkClick: (QuotesData) -> Unit) :
             binding.apply {
                 quoteText.text = data.quoteText
 
-               savedQuoteEmpty.setImageResource(
+                savedQuoteEmpty.setImageResource(
                     if (data.isBookmarked == true) {
                         R.drawable.ic_favourite_quote_filled
                     } else {
@@ -56,7 +60,6 @@ class QuotesAdapter(val onBookMarkClick: (QuotesData) -> Unit) :
                         notifyItemChanged(position)
                     }
                 }
-
             }
         }
 

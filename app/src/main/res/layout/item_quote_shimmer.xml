@@ -11,7 +11,6 @@
     app:cardBackgroundColor="@color/colorBackGround"
     >
 
-
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
@@ -42,9 +41,6 @@
             tools:text="njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs "
             />
 
-
-
-
         <ImageView
             android:id="@+id/quoteIconReversed"
             android:layout_width="wrap_content"
@@ -54,8 +50,6 @@
             android:src="@drawable/ic_quote_icon_reversed"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/quoteText"/>
-
-
 
     </RelativeLayout>
 

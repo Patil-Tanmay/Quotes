@@ -2,12 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Quotes" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
-<!--        <item name="colorPrimary">@color/purple_500</item>-->
-<!--        <item name="colorPrimaryVariant">@color/purple_700</item>-->
-<!--        <item name="colorOnPrimary">@color/white</item> -->
 
-
-<!--        <item name="colorPrimary">#1A2A39</item>-->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -24,8 +19,6 @@
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-
-        <!-- Customize your theme here. -->
 
     </style>
 

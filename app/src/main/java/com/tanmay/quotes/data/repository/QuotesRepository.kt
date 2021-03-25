@@ -33,7 +33,7 @@ class QuotesRepository @Inject constructor(
       suspend fun deleteQuote(quoteText: String) =
         savedQuotesDatabase.QuotesDataDao().deleteQuote(quoteText)
 
-     fun getAllSavedQuotes()  =
+      fun getAllSavedQuotes()  =
         savedQuotesDatabase.QuotesDataDao().getSavedQuotes()
 
 

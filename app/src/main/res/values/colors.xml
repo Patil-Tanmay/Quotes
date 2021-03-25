@@ -13,5 +13,5 @@
     <color name="colorPrimaryVariant">#29425A</color>
     <color name="colorBackGround">#15202B</color>
 
-<color name="bottomNavColor" tools:ignore="ReferenceType">@drawable/bottomnavcolor</color>
+
 </resources>

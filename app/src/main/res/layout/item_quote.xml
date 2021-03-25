@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="12dp"
-    app:cardCornerRadius="25dp"
-    app:cardElevation="300dp"
+    android:clickable="true"
+    android:focusable="true"
     app:cardBackgroundColor="#1d2d3c"
-    >
+    app:cardCornerRadius="25dp"
+    app:cardElevation="300dp">
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -29,11 +30,9 @@
             android:id="@+id/savedQuoteEmpty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_favourite_quote_empty"
             android:layout_alignParentEnd="true"
-            android:layout_margin="8dp"/>
-
-
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_favourite_quote_empty" />
 
 
         <TextView
@@ -44,25 +43,20 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="serif-monospace"
+            android:textAllCaps="false"
             android:textSize="19sp"
             android:textStyle="bold"
-            android:textAllCaps="false"
             tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
-
-<!--        android:textColor="@color/white"-->
-
 
         <ImageView
             android:id="@+id/quoteIconReversed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/quoteText"
+            android:layout_alignParentEnd="true"
             android:layout_margin="8dp"
             android:contentDescription="Nothing"
-            android:src="@drawable/ic_quote_icon_reversed"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/quoteText"/>
-
-
+            android:src="@drawable/ic_quote_icon_reversed" />
 
     </RelativeLayout>
 

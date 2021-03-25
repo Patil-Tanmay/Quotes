@@ -9,17 +9,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SavedQuotesViewModel @Inject constructor(
     private val repository: QuotesRepository
-):ViewModel(){
+) : ViewModel() {
 
+    fun getSavedQuotes(): LiveData<List<QuotesData>> {
+        return repository.getAllSavedQuotes()
+    }
 
-    fun getSavedQuotes() =
-        repository.getAllSavedQuotes()
-
-
-    fun deleteQuote(quote : QuotesData){
+    fun deleteQuote(quote: QuotesData) {
         viewModelScope.launch {
             repository.deleteQuote(quote.quoteText)
         }
