@@ -5,7 +5,7 @@
 
 ***You can Install latest Quotes app from below***
 
-[![Quotes App](https://img.shields.io/badge/❝Quotes❞-APK-blue.svg?style=for-the-badge&logo=android&color=blue)](https://drive.google.com/file/d/13cuMOa0_o_nxy7L5FHOUpw94GqPakQLI/view?usp=sharing)
+[![Quotes App](https://img.shields.io/badge/❝Quotes❞-APK-blue.svg?style=for-the-badge&logo=android&color=blue)](https://github.com/tanmay7715/Quotes/releases/download/v1.0/app-debug.apk)
  
 ![](art/QuotesApp.gif)
 
