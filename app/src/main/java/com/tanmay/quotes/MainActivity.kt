@@ -1,9 +1,11 @@
 package com.tanmay.quotes
 
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.navigation.NavController
@@ -12,19 +14,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.tanmay.quotes.databinding.ActivityMainBinding
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
+import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity1"
+//    private val TAG = "MainActivity1"
 
     private lateinit var navController: NavController
 
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
-//    private val viewmodel by viewModels<QuotesFragmentViewModel>()
+    private val viewModelQuotesFragment by viewModels<QuotesFragmentViewModel>()
 
+    private val viewModelSavedQuotes by viewModels<SavedQuotesViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,20 +42,20 @@ class MainActivity : AppCompatActivity(){
 
         binding.bottomNavView.setupWithNavController(navController)
 
-//        binding.bottomNavView.setOnNavigationItemSelectedListener{
-//            when(it.itemId) {
-//                R.id.savedQuoteFragment -> {
-//                    Toast.makeText(this,"SavedQuotesFragment",Toast.LENGTH_SHORT).show()
-//                    navController.navigate(R.id.savedQuoteFragment)
-//                }
-//                R.id.quotesFragment -> {
-//                    navController.navigate(R.id.quotesFragment)
-//                }
-//            }
-//            true
-//        }
 
+        viewModelQuotesFragment.copyQuote.observe(this, { quoteText ->
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show()
+            val clip: ClipData = ClipData.newPlainText("Quote Text", quoteText)
+            clipboard.setPrimaryClip(clip)
+        })
 
+        viewModelSavedQuotes.copyQuote.observe(this,{ quoteText ->
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show()
+            val clip: ClipData = ClipData.newPlainText("Quote Text", quoteText)
+            clipboard.setPrimaryClip(clip)
+        })
 
     }
 }

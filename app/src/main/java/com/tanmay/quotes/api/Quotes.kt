@@ -7,6 +7,4 @@ data class Quotes(
     val pagination: Pagination,
     val statusCode: Int,
     val totalQuotes: Int
-){
-
-}
+)

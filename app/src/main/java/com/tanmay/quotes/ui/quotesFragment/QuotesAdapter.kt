@@ -2,17 +2,17 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tanmay.quotes.R
-import com.tanmay.quotes.data.QuotesData
+import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.databinding.ItemQuoteBinding
 
 class QuotesAdapter(
-    val onBookMarkClick: (QuotesData) -> Unit,
-) : PagingDataAdapter<QuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
+    val onBookMarkClick: (FetchedQuotesData) -> Unit,
+    val onCopyClick : (String) -> Unit
+) : PagingDataAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
     override fun onBindViewHolder(holder: QuotesViewHolder, position: Int) {
@@ -32,16 +32,23 @@ class QuotesAdapter(
                 if (qData != null) {
                     onBookMarkClick(qData)
                 }
+            },
+            onCopyClick = { position ->
+                val qData = getItem(position)
+                if (qData != null){
+                    onCopyClick(qData.quoteText)
+                }
             })
     }
 
     inner class QuotesViewHolder(
         private val binding: ItemQuoteBinding,
         val onBookMarkClick: (Int) -> Unit,
+        val onCopyClick : (Int) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: QuotesData) {
+        fun bind(data: FetchedQuotesData) {
             binding.apply {
                 quoteText.text = data.quoteText
 
@@ -52,7 +59,6 @@ class QuotesAdapter(
                         R.drawable.ic_favourite_quote_empty
                     }
                 )
-
                 savedQuoteEmpty.setOnClickListener {
                     val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -60,20 +66,25 @@ class QuotesAdapter(
                         notifyItemChanged(position)
                     }
                 }
+
+                copyText.setOnClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        onCopyClick(position)
+                    }
+                }
             }
         }
-
-
     }
 
     //to compare the data using diffUtil
     companion object {
-        private val QUOTE_COMPARATOR = object : DiffUtil.ItemCallback<QuotesData>() {
-            override fun areItemsTheSame(oldItem: QuotesData, newItem: QuotesData): Boolean {
+        private val QUOTE_COMPARATOR = object : DiffUtil.ItemCallback<FetchedQuotesData>() {
+            override fun areItemsTheSame(oldItem: FetchedQuotesData, newItem: FetchedQuotesData): Boolean {
                 return oldItem._id == newItem._id
             }
 
-            override fun areContentsTheSame(oldItem: QuotesData, newItem: QuotesData): Boolean {
+            override fun areContentsTheSame(oldItem: FetchedQuotesData, newItem: FetchedQuotesData): Boolean {
                 return oldItem == newItem
             }
         }

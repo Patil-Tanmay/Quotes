@@ -9,9 +9,10 @@ import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.ItemQuoteBinding
 
-class SavedQuotesAdapter(val onBookmarkClick: (QuotesData) -> Unit) :
-    RecyclerView.Adapter<SavedQuotesAdapter.SavedQuotesViewHolder>() {
-
+class SavedQuotesAdapter(
+    val onBookmarkClick: (QuotesData) -> Unit,
+    val onCopyClick : (String) -> Unit
+) : RecyclerView.Adapter<SavedQuotesAdapter.SavedQuotesViewHolder>() {
 
     private val differCallBack = object : DiffUtil.ItemCallback<QuotesData>() {
         override fun areItemsTheSame(oldItem: QuotesData, newItem: QuotesData): Boolean {
@@ -36,6 +37,12 @@ class SavedQuotesAdapter(val onBookmarkClick: (QuotesData) -> Unit) :
                 if (qData != null) {
                     onBookmarkClick(qData)
                 }
+            },
+            onCopyClick = { position ->
+                val qData = differ.currentList[position]
+                if (qData != null) {
+                    onCopyClick(qData.quoteText)
+                }
             }
         )
     }
@@ -55,7 +62,8 @@ class SavedQuotesAdapter(val onBookmarkClick: (QuotesData) -> Unit) :
 
     inner class SavedQuotesViewHolder(
         private val binding: ItemQuoteBinding,
-        val onBookmarkClick: (Int) -> Unit
+        val onBookmarkClick: (Int) -> Unit,
+        val onCopyClick: (Int) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -75,6 +83,13 @@ class SavedQuotesAdapter(val onBookmarkClick: (QuotesData) -> Unit) :
                     val position = bindingAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onBookmarkClick(position)
+                    }
+                }
+
+                copyText.setOnClickListener {
+                    val position = bindingAdapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        onCopyClick(position)
                     }
                 }
             }

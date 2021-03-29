@@ -25,10 +25,8 @@ class QuotesLoadStateAdapter(private val retry : () -> Unit) :
         holder.bind(loadState)
     }
 
-
     inner class QuotesLoadStateViewHolder(private val binding: QuotesLoadFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.btnRetry.setOnClickListener {
                 retry.invoke()
@@ -40,9 +38,8 @@ class QuotesLoadStateAdapter(private val retry : () -> Unit) :
                 progressBar.isVisible = loadState is LoadState.Loading
                 btnRetry.isVisible = loadState !is LoadState.Loading
                 textViewError.isVisible = loadState !is LoadState.Loading
-
             }
         }
-
     }
+
 }

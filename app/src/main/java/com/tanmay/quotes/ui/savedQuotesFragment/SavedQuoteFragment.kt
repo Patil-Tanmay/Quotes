@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.tanmay.quotes.R
 import com.tanmay.quotes.databinding.FragmentSavedQuoteBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
 
-    private val TAG = "savedQuote"
+//    private val TAG = "savedQuote"
 
     private lateinit var adapter: SavedQuotesAdapter
 
@@ -23,11 +23,10 @@ class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
     private val binding get() = _binding!!
 
 
-    private val viewModel by viewModels<SavedQuotesViewModel>()
+    private val viewModel by activityViewModels<SavedQuotesViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         _binding = FragmentSavedQuoteBinding.bind(view)
 
@@ -48,6 +47,9 @@ class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
         adapter = SavedQuotesAdapter(
             onBookmarkClick = { quote ->
                 viewModel.deleteQuote(quote)
+            },
+            onCopyClick = { quoteText ->
+                viewModel.copyQuote(quoteText)
             }
         )
 

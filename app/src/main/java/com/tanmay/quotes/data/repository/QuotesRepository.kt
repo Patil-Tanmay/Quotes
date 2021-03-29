@@ -1,40 +1,40 @@
 package com.tanmay.quotes.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.liveData
+import androidx.paging.*
 import com.tanmay.quotes.api.QuotesApi
+import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
-import com.tanmay.quotes.data.QuotesPagingSource
-import com.tanmay.quotes.db.SavedQuotesDatabase
+import com.tanmay.quotes.data.QuotesRemoteMediator
+import com.tanmay.quotes.db.QuotesDatabase
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class QuotesRepository @Inject constructor(
     private val quotesApi: QuotesApi,
-    private val savedQuotesDatabase: SavedQuotesDatabase
+    private val quotesDatabase: QuotesDatabase
 ) {
 
-    fun getAllQuotes() =
+    @ExperimentalPagingApi
+    fun getAllFetchedQuotes(): Flow<PagingData<FetchedQuotesData>> =
         Pager(
-            config = PagingConfig(
-                pageSize = 4,
-                maxSize = 100,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { QuotesPagingSource(quotesApi, savedQuotesDatabase) }
-        ).liveData
+            config = PagingConfig(pageSize = 4, maxSize = 300, enablePlaceholders = false),
+            remoteMediator = QuotesRemoteMediator(quotesApi, quotesDatabase),
+            pagingSourceFactory = { quotesDatabase.quotesDao().getAllFetchedQuotes() }
+        ).flow
 
-    suspend fun insertQuote(quote: QuotesData) =
-        savedQuotesDatabase.QuotesDataDao().insertQuote(quote)
 
-      suspend fun deleteQuote(quoteText: String) =
-        savedQuotesDatabase.QuotesDataDao().deleteQuote(quoteText)
+    suspend fun insertSavedQuote(quote: QuotesData) =
+        quotesDatabase.quotesDao().insertQuote(quote)
 
-      fun getAllSavedQuotes()  =
-        savedQuotesDatabase.QuotesDataDao().getSavedQuotes()
+    suspend fun deleteSavedQuote(quoteText: String) =
+        quotesDatabase.quotesDao().deleteQuote(quoteText)
 
+    fun getAllSavedQuotes() =
+        quotesDatabase.quotesDao().getSavedQuotes()
+
+    suspend fun updateFetchedQuote(quote: FetchedQuotesData) =
+        quotesDatabase.quotesDao().updateFetchedQuote(quote)
 
 }

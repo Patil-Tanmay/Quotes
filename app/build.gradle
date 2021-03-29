@@ -73,11 +73,18 @@ dependencies {
     //shimmer
     implementation "com.facebook.shimmer:shimmer:0.5.0"
 
-    //room
+//    //room
     def room_version = "2.2.6"
+//
+    implementation "androidx.room:room-runtime:2.3.0-beta03"
+    kapt "androidx.room:room-compiler:2.3.0-beta03"
+    implementation "androidx.room:room-ktx:2.3.0-beta03"
 
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+
+
+    implementation "androidx.paging:paging-rxjava2-ktx:2.2.6"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta02"
+    implementation 'androidx.paging:paging-rxjava2-ktx:3.0.0-beta02'
 
     //Coroutines support for Room
     implementation "androidx.room:room-ktx:$room_version"

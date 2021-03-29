@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.db.QuotesDataDao
-import com.tanmay.quotes.db.SavedQuotesDatabase
+import com.tanmay.quotes.db.QuotesDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,17 +35,17 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSavedQuotesDatabase(@ApplicationContext context: Context):
-            SavedQuotesDatabase{
+            QuotesDatabase{
                     return Room.databaseBuilder(
                         context,
-                        SavedQuotesDatabase::class.java,
+                        QuotesDatabase::class.java,
                         "SavedQuotesDatabase"
                     ).build()
     }
 
     @Provides
-    fun provideQuotesDataDao(savedQuotesDatabase: SavedQuotesDatabase) : QuotesDataDao{
-        return savedQuotesDatabase.QuotesDataDao()
+    fun provideQuotesDataDao(quotesDatabase: QuotesDatabase) : QuotesDataDao{
+        return quotesDatabase.quotesDao()
     }
 
 

@@ -6,26 +6,32 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import com.tanmay.quotes.R
+import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
-    private val TAG = "MainActivity1"
+//    private val TAG = "MainActivity1"
 
     private var _binding: FragmentQuotesBinding? = null
     private val binding get() = _binding!!
 
 
-    private val viewModel: QuotesFragmentViewModel by viewModels()
+    private val viewModel: QuotesFragmentViewModel by activityViewModels()
 
     private lateinit var adapter: QuotesAdapter
 
 
+    @ExperimentalPagingApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -33,16 +39,27 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
 
         adapter = QuotesAdapter(
-            onBookMarkClick = { qData ->
-                viewModel.isBookmarked(qData)
+            onBookMarkClick = { fetchedQuotes ->
+                val qData = QuotesData(
+                    id = fetchedQuotes.id,
+                    _id = fetchedQuotes._id,
+                    quoteAuthor = fetchedQuotes.quoteAuthor,
+                    quoteText = fetchedQuotes.quoteText,
+                    quoteGenre = fetchedQuotes.quoteGenre,
+                    isBookmarked = fetchedQuotes.isBookmarked
+                )
+                viewModel.isBookmarked(qData,fetchedQuotes)
+            },
+            onCopyClick = { quoteText ->
+                viewModel.copyQuote(quoteText)
             }
         )
 
         binding.apply {
             recyclerViewQuote.setHasFixedSize(true)
-            recyclerViewQuote.adapter = adapter.withLoadStateHeaderAndFooter(
-                header = QuotesLoadStateAdapter { adapter.retry() },
-                footer = QuotesLoadStateAdapter { adapter.retry() }
+
+            recyclerViewQuote.adapter = adapter.withLoadStateFooter(
+               footer = QuotesLoadStateAdapter{adapter.retry()}
             )
 
             btnRetry.setOnClickListener {
@@ -51,23 +68,29 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         }
 
 
-        viewModel.getQuotes().observe(viewLifecycleOwner) {
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
+
+        lifecycleScope.launch {
+        viewModel.getFetchedQuotes().distinctUntilChanged().collectLatest {
+            adapter.submitData(it)
         }
+    }
 
 
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            adapter.addLoadStateListener { loadState ->
+                binding.apply {
 
-        adapter.addLoadStateListener { loadState ->
-            binding.apply {
-                shimmerLayout.isVisible = loadState.source.refresh is LoadState.Loading
-                recyclerViewQuote.isVisible = loadState.source.refresh is LoadState.NotLoading
-                btnRetry.isVisible = loadState.source.refresh is LoadState.Error
-                txtViewError.isVisible = loadState.source.refresh is LoadState.Error
+                    shimmerLayout.isVisible = loadState.mediator?.refresh is LoadState.Loading
+                    recyclerViewQuote.isVisible = loadState.mediator?.refresh is LoadState.NotLoading
 
-                if (recyclerViewQuote.isVisible) {
-                    shimmerLayout.stopShimmer()
+                    btnRetry.isVisible = loadState.mediator?.refresh is LoadState.Error
+                    txtViewError.isVisible = loadState.mediator?.refresh is LoadState.Error
+
+                    if (recyclerViewQuote.isVisible) {
+                        shimmerLayout.stopShimmer()
+                    }
+
                 }
-
             }
         }
 

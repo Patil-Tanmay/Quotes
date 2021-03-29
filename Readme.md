@@ -7,7 +7,7 @@
 
 [![Quotes App](https://img.shields.io/badge/❝Quotes❞-APK-blue.svg?style=for-the-badge&logo=android&color=blue)](https://github.com/tanmay7715/Quotes/releases/download/v1.0/app-debug.apk)
  
-![](art/QuotesApp.gif)
+![QuotesWorking](art/QuotesApp.gif)
 
 ## About
 It simply loads **Quotes** data from API and shows it inside the quotesfragment.
