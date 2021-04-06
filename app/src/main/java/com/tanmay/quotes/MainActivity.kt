@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.navigation.NavController
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             val clip: ClipData = ClipData.newPlainText("Quote Text", quoteText)
             clipboard.setPrimaryClip(clip)
         })
-
+        
     }
 }
 

@@ -10,7 +10,6 @@ import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.db.QuotesDatabase
 import retrofit2.HttpException
 import java.io.IOException
-import java.io.InvalidObjectException
 
 private const val QUOTES_STARTING_PAGE_INDEX = 1
 
@@ -26,12 +25,26 @@ class QuotesRemoteMediator(
         state: PagingState<Int, FetchedQuotesData>
     ): MediatorResult {
 
-        val page = when (val pageKeyData = getKeyPageData(loadType, state)) {
-            is MediatorResult.Success -> {
-                return pageKeyData
+        val page = when (loadType) {
+            LoadType.REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                remoteKeys?.nextKey?.minus(1) ?: QUOTES_STARTING_PAGE_INDEX
             }
-            else -> {
-                pageKeyData as Int
+            LoadType.PREPEND -> {
+                val remoteKeys = getRemoteKeyForFirstItem(state)
+                // If the previous key is null, then the list is empty so we should wait for data
+                // fetched by remote refresh and can simply skip loading this time by returning
+                // `false` for endOfPaginationReached.
+                val prevKey = remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = false)
+                prevKey
+            }
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                // If the next key is null, then the list is empty so we should wait for data
+                // fetched by remote refresh and can simply skip loading this time by returning
+                // `false` for endOfPaginationReached.
+                val nextKey = remoteKeys?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = false)
+                nextKey
             }
         }
 
@@ -93,65 +106,37 @@ class QuotesRemoteMediator(
     }
 
 
-    /**
-     * this returns the page key or the final end of list success result
-     */
-    private suspend fun getKeyPageData(loadType: LoadType, state: PagingState<Int, FetchedQuotesData>): Any? {
-        return when (loadType) {
-            LoadType.REFRESH -> {
-                val remoteKeys = getClosestRemoteKey(state)
-                remoteKeys?.nextKey?.minus(1) ?: QUOTES_STARTING_PAGE_INDEX
-            }
-            LoadType.APPEND -> {
-                val remoteKeys = getLastRemoteKey(state)
-                    ?: throw InvalidObjectException("Remote key should not be null for $loadType")
-                remoteKeys.nextKey
-            }
-            LoadType.PREPEND -> {
-                val remoteKeys = getFirstRemoteKey(state)
-                    ?: throw InvalidObjectException("Invalid state, key should not be null")
-                //end of list condition reached
-                remoteKeys.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
-                remoteKeys.prevKey
-            }
-        }
-    }
-
-
-private suspend fun getFirstRemoteKey(state: PagingState<Int, FetchedQuotesData>): RemoteKeys? {
-    return state.pages
-        .firstOrNull {
-            it.data.isNotEmpty()
-        }
-        ?.data?.firstOrNull()
-        ?.let {
-            quotesDatabase.getRepoDao().remoteKeysQuotesId(it._id)
-        }
-    }
-
-    /**
-     * get the last remote key inserted which had the data
-     */
-    private suspend fun getLastRemoteKey(state: PagingState<Int, FetchedQuotesData>): RemoteKeys? {
-        return state.pages
-            .lastOrNull {
-                it.data.isNotEmpty()
-            }
-            ?.data?.lastOrNull()
-            ?.let{
-                quotesDatabase.getRepoDao().remoteKeysQuotesId(it._id)
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, FetchedQuotesData>): RemoteKeys? {
+        // Get the last page that was retrieved, that contained items.
+        // From that last page, get the last item
+        return state.pages.lastOrNull() { it.data.isNotEmpty() }?.data?.lastOrNull()
+            ?.let { repo ->
+                // Get the remote keys of the last item retrieved
+                quotesDatabase.getRepoDao().remoteKeysQuotesId(repo._id)
             }
     }
 
-    /**
-     * get the closest remote key inserted which had the data
-     */
-    private suspend fun getClosestRemoteKey(state: PagingState<Int, FetchedQuotesData>): RemoteKeys? {
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, FetchedQuotesData>): RemoteKeys? {
+        // Get the first page that was retrieved, that contained items.
+        // From that first page, get the first item
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
+            ?.let { repo ->
+                // Get the remote keys of the first items retrieved
+                quotesDatabase.getRepoDao().remoteKeysQuotesId(repo._id)
+            }
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(
+        state: PagingState<Int, FetchedQuotesData>
+    ): RemoteKeys? {
+        // The paging library is trying to load data after the anchor position
+        // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?._id?.let {
-                quotesDatabase.getRepoDao().remoteKeysQuotesId(it)
+            state.closestItemToPosition(position)?._id?.let { repoId ->
+                quotesDatabase.getRepoDao().remoteKeysQuotesId(repoId)
             }
         }
     }
+
 
 }
