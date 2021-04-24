@@ -43,10 +43,5 @@ object AppModule {
                     ).build()
     }
 
-    @Provides
-    fun provideQuotesDataDao(quotesDatabase: QuotesDatabase) : QuotesDataDao{
-        return quotesDatabase.quotesDao()
-    }
-
 
 }
