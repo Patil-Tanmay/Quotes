@@ -53,35 +53,35 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     //navigation component
-    implementation "androidx.navigation:navigation-fragment-ktx:2.3.4"
-    implementation "androidx.navigation:navigation-ui-ktx:2.3.4"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
 
     //dagger Hilt dependency
-    implementation "com.google.dagger:hilt-android:2.33-beta"
-    kapt "com.google.dagger:hilt-compiler:2.33-beta"
+    implementation "com.google.dagger:hilt-android:2.35"
+    kapt "com.google.dagger:hilt-compiler:2.35"
 
     //integration with jetpack library
-    implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0-beta01'
+    implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0'
 
     // Retrofit + GSON
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
 
     // Paging 3
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta03"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0"
 
     //shimmer
     implementation "com.facebook.shimmer:shimmer:0.5.0"
 
 //    room
-    implementation "androidx.room:room-runtime:2.3.0-rc01"
-    kapt "androidx.room:room-compiler:2.3.0-rc01"
-    implementation "androidx.room:room-ktx:2.3.0-rc01"
+    implementation "androidx.room:room-runtime:2.4.0-alpha02"
+    kapt "androidx.room:room-compiler:2.4.0-alpha02"
+    implementation "androidx.room:room-ktx:2.4.0-alpha02"
 
     
-    implementation "androidx.paging:paging-rxjava2-ktx:2.2.6"
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta03"
-    implementation 'androidx.paging:paging-rxjava2-ktx:3.0.0-beta03'
+    implementation "androidx.paging:paging-rxjava2-ktx:3.0.0"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0"
+    implementation 'androidx.paging:paging-rxjava2-ktx:3.0.0'
 
 
 }
