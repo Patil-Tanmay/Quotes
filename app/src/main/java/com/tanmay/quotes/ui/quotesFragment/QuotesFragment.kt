@@ -31,7 +31,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     private lateinit var adapter: QuotesAdapter
 
 
-    @ExperimentalPagingApi
+    @OptIn(ExperimentalPagingApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
