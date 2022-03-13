@@ -15,13 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: 🧱 Set Up JDK
+      - name: Set Up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
 
-      - name: ⏳ Build with Gradle
+      - name: Build with Gradle
         run: ./gradlew build
 
-      - name: 🏗 Build APK
+      - name: Build APK
         run: bash ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 3
