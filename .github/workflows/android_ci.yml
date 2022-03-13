@@ -20,9 +20,6 @@ jobs:
         with:
           java-version: 11
 
-      - name: 🛠 Build Project with Spotless Check
-        run: ./gradlew spotlessCheck assemble lintDebug --stacktrace
-
       - name: ⏳ Build with Gradle
         run: ./gradlew build
 
