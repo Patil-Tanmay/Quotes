@@ -9,18 +9,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
+import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPagingApi::class)
 @AndroidEntryPoint
 class QuotesFragment : Fragment(R.layout.fragment_quotes) {
-
-//    private val TAG = "MainActivity1"
 
     private var _binding: FragmentQuotesBinding? = null
     private val binding get() = _binding!!
@@ -28,17 +30,21 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
     private val viewModel: QuotesFragmentViewModel by activityViewModels()
 
-    private lateinit var adapter: QuotesAdapter
+    private lateinit var quotesAdapter: QuotesAdapter
+
+    private lateinit var genresAdapter: GenreAdapter
 
 
-    @OptIn(ExperimentalPagingApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentQuotesBinding.bind(view)
 
+        viewModel.getQuotesGenres()
 
-        adapter = QuotesAdapter(
+        genresAdapter = GenreAdapter()
+
+        quotesAdapter = QuotesAdapter(
             onBookMarkClick = { fetchedQuotes ->
                 val qData = QuotesData(
                     id = fetchedQuotes.id,
@@ -48,40 +54,45 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                     quoteGenre = fetchedQuotes.quoteGenre,
                     isBookmarked = fetchedQuotes.isBookmarked
                 )
-                viewModel.isBookmarked(qData,fetchedQuotes)
+                viewModel.isBookmarked(qData, fetchedQuotes)
             },
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
             }
         )
 
-        binding.apply {
-            recyclerViewQuote.setHasFixedSize(true)
+        setupGenreAdapter()
+        setUpQuotesAdapter()
 
-            recyclerViewQuote.adapter = adapter.withLoadStateFooter(
-               footer = QuotesLoadStateAdapter{adapter.retry()}
-            )
+        binding.btnRetry.setOnClickListener {
+            quotesAdapter.retry()
+        }
 
-            btnRetry.setOnClickListener {
-                adapter.retry()
+        lifecycleScope.launch {
+            viewModel.fetchedQuotes.distinctUntilChanged().collectLatest {
+                quotesAdapter.submitData(it)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.quotesGenres.collect {
+                if (it is Resource.Success) {
+                    genresAdapter.sumbitGenres(it.data!!)
+                }
             }
         }
 
 
-
-        lifecycleScope.launch {
-        viewModel.getFetchedQuotes().distinctUntilChanged().collectLatest {
-            adapter.submitData(it)
-        }
-    }
-
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            adapter.addLoadStateListener { loadState ->
+            quotesAdapter.addLoadStateListener { loadState ->
                 binding.apply {
 
                     shimmerLayout.isVisible = loadState.mediator?.refresh is LoadState.Loading
-                    recyclerViewQuote.isVisible = loadState.mediator?.refresh is LoadState.NotLoading
+                    recyclerViewQuote.isVisible =
+                        loadState.mediator?.refresh is LoadState.NotLoading
+
+                    genreRec.isVisible =
+                        loadState.mediator?.refresh is LoadState.NotLoading
 
                     btnRetry.isVisible = loadState.mediator?.refresh is LoadState.Error
                     txtViewError.isVisible = loadState.mediator?.refresh is LoadState.Error
@@ -94,6 +105,24 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             }
         }
 
+    }
+
+    private fun setupGenreAdapter(){
+        binding.apply {
+            genreRec.setHasFixedSize(true)
+            genreRec.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+            genreRec.adapter = genresAdapter
+        }
+    }
+
+    private fun setUpQuotesAdapter() {
+        binding.apply {
+            recyclerViewQuote.setHasFixedSize(true)
+
+            recyclerViewQuote.adapter = quotesAdapter.withLoadStateFooter(
+                footer = QuotesLoadStateAdapter { quotesAdapter.retry() }
+            )
+        }
     }
 
     override fun onResume() {

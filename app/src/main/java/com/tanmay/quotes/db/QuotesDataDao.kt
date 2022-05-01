@@ -10,27 +10,26 @@ import com.tanmay.quotes.data.QuotesData
 interface QuotesDataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertQuote(quote : QuotesData) : Long
+    suspend fun insertQuote(quote: QuotesData): Long
 
     @Query("SELECT * FROM SavedQuotes")
-    suspend fun getAllSavedQuotes() :List<QuotesData>
+    suspend fun getAllSavedQuotes(): List<QuotesData>
 
     @Query("DELETE FROM SavedQuotes WHERE quoteText = :quote")
-    suspend fun deleteQuote(quote : String)
+    suspend fun deleteQuote(quote: String)
 
     @Query("SELECT * FROM SavedQuotes")
-     fun getSavedQuotes() : LiveData<List<QuotesData>>
-
+    fun getSavedQuotes(): LiveData<List<QuotesData>>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFetchedQuote(quote : List<FetchedQuotesData>)
+    suspend fun insertFetchedQuote(quote: List<FetchedQuotesData>)
 
-    @Query("SELECT * FROM fetched_quotes")
-    fun getAllFetchedQuotes() : PagingSource<Int, FetchedQuotesData>
+    @Query("SELECT * FROM fetched_quotes WHERE TAG=:tag")
+    fun getAllFetchedQuotes(tag: String): PagingSource<Int, FetchedQuotesData>
 
     @Update
-    suspend fun updateFetchedQuote(data : FetchedQuotesData)
+    suspend fun updateFetchedQuote(data: FetchedQuotesData)
 
     @Query("DELETE FROM fetched_quotes")
     suspend fun deleteFetchedQuote()

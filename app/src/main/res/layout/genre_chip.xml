@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chipText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/white"
+    android:layout_marginHorizontal="7dp"
+    app:chipBackgroundColor="#1d2d3c"
+    app:chipIcon="@drawable/ic_check"
+    app:iconEndPadding="2dp"
+    tools:text="abcd abcd" />

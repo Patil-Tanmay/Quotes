@@ -17,7 +17,8 @@ private const val QUOTES_STARTING_PAGE_INDEX = 1
 @ExperimentalPagingApi
 class QuotesRemoteMediator(
     val api : QuotesApi,
-    private val quotesDatabase: QuotesDatabase
+    private val quotesDatabase: QuotesDatabase,
+    val tag: String
 ): RemoteMediator<Int,FetchedQuotesData>() {
 
     override suspend fun load(
@@ -49,7 +50,8 @@ class QuotesRemoteMediator(
         }
 
         try {
-            val response = api.getQuotes(page, state.config.pageSize)
+
+            val response = if (tag == "ALL") api.getQuotes(page, state.config.pageSize) else api.getQuotesByGenre(tag, page, state.config.pageSize)
             val quotes = response.data
             val isEndOfList = quotes.isEmpty()
             quotesDatabase.withTransaction {
@@ -73,14 +75,16 @@ class QuotesRemoteMediator(
                             quoteAuthor = qData.quoteAuthor,
                             quoteGenre = qData.quoteGenre,
                             quoteText = qData.quoteText,
-                            isBookmarked = true
+                            isBookmarked = true,
+                            TAG = tag
                         )
                     } else {
                         FetchedQuotesData(
                             _id = qData._id,
                             quoteAuthor = qData.quoteAuthor,
                             quoteGenre = qData.quoteGenre,
-                            quoteText = qData.quoteText
+                            quoteText = qData.quoteText,
+                            TAG = tag
                         )
                     }
                 }

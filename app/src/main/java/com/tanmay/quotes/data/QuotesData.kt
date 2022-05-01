@@ -27,10 +27,10 @@ data class FetchedQuotesData(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int?=null,
-
     val _id: String,
     val quoteAuthor: String,
     val quoteGenre: String,
     val quoteText: String,
-    var isBookmarked: Boolean?=null
+    var isBookmarked: Boolean?=null,
+    val TAG: String
 )

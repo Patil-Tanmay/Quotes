@@ -13,11 +13,13 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.paging.ExperimentalPagingApi
 import com.tanmay.quotes.databinding.ActivityMainBinding
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+@OptIn(ExperimentalPagingApi::class)
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
