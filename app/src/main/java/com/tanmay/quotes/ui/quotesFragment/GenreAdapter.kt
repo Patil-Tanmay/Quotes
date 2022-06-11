@@ -10,7 +10,7 @@ class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
     private var generes: List<String> = emptyList()
 
-    fun sumbitGenres(quotesGenre: QuotesGenres){
+    fun submitGenres(quotesGenre: QuotesGenres){
         generes = quotesGenre.data
     }
 
