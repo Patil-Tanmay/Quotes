@@ -5,9 +5,14 @@
     android:id="@+id/chipText"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/white"
     android:layout_marginHorizontal="7dp"
+    android:checkable="true"
+    android:clickable="true"
+    android:textColor="@color/white"
+    app:checkedIcon="@drawable/ic_check"
+    app:checkedIconVisible="true"
     app:chipBackgroundColor="#1d2d3c"
-    app:chipIcon="@drawable/ic_check"
+    android:checked="false"
     app:iconEndPadding="2dp"
-    tools:text="abcd abcd" />
+    tools:text="abcd abcd"
+    android:focusable="true" />

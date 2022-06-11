@@ -3,7 +3,6 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -16,9 +15,6 @@ import com.tanmay.quotes.databinding.FragmentQuotesBinding
 import com.tanmay.quotes.utils.NetworkState
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -77,7 +73,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.quotesGenres.collect {
                 if (it is Resource.Success) {
-                    genresAdapter.sumbitGenres(it.data!!)
+                    genresAdapter.submitGenres(it.data!!)
                 }
             }
         }
