@@ -6,11 +6,14 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
+import com.tanmay.quotes.utils.NetworkState
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -71,18 +74,52 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             quotesAdapter.submitList(it)
         }
 
-        lifecycleScope.launch {
-//            viewModel.fetchedQuotes.distinctUntilChanged().collectLatest {
-//                quotesAdapter.submitData(it)
-//            }
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.quotesGenres.collect {
                 if (it is Resource.Success) {
                     genresAdapter.sumbitGenres(it.data!!)
                 }
             }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                launch {
+                    quotesListing.refreshState.collect{
+                        when(it){
+                            NetworkState.LOADING -> {
+                                if(binding.recyclerViewQuote.canScrollVertically(1)){
+                                    binding.shimmerLayout.visibility = View.GONE
+                                    binding.recyclerViewQuote.visibility = View.VISIBLE
+                                    binding.genreRec.visibility = View.VISIBLE
+                                    binding.btnRetry.visibility = View.GONE
+                                }else {
+                                    binding.shimmerLayout.visibility = View.VISIBLE
+                                    binding.recyclerViewQuote.visibility = View.GONE
+                                    binding.genreRec.visibility = View.GONE
+                                    binding.btnRetry.visibility = View.GONE
+                                }
+                            }
+
+                            NetworkState.IDLE -> {
+                                binding.shimmerLayout.visibility = View.GONE
+                                binding.recyclerViewQuote.visibility = View.VISIBLE
+                                binding.genreRec.visibility = View.VISIBLE
+                                binding.btnRetry.visibility = View.GONE
+                            }
+
+                            else -> {
+                                binding.btnRetry.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            quotesListing.onRefresh()
         }
 
 
@@ -121,7 +158,6 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     private fun setUpQuotesAdapter() {
         binding.apply {
             recyclerViewQuote.setHasFixedSize(true)
-
             recyclerViewQuote.adapter = quotesAdapter
         }
     }
