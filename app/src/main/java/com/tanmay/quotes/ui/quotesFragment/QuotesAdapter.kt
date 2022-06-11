@@ -2,12 +2,14 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.databinding.ItemQuoteBinding
+import kotlinx.coroutines.launch
 
 class QuotesAdapter(
     val onBookMarkClick: (FetchedQuotesData) -> Unit,
@@ -63,6 +65,7 @@ class QuotesAdapter(
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onBookMarkClick(position)
+                        bookmarkClickImageChange(position)
                         notifyItemChanged(position)
                     }
                 }
@@ -74,6 +77,15 @@ class QuotesAdapter(
                     }
                 }
             }
+        }
+    }
+
+    private fun bookmarkClickImageChange(position: Int){
+        val qData = getItem(position)
+        if (qData?.isBookmarked == null) {
+            qData?.isBookmarked = true
+        } else {
+            qData.isBookmarked = qData.isBookmarked == false
         }
     }
 

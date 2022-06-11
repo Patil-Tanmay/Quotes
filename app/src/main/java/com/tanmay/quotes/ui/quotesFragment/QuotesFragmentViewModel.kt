@@ -36,6 +36,8 @@ class QuotesFragmentViewModel @Inject constructor(
     private val _quotesGenres = MutableStateFlow<Resource<QuotesGenres>>(Resource.Loading())
     val quotesGenres get() = _quotesGenres
 
+    private lateinit var quotesListing: QuotesListing
+
     fun getQuotesGenres() = viewModelScope.launch {
             repository.getQuotesGenres().collect {
                 _quotesGenres.emit(it)
@@ -55,6 +57,7 @@ class QuotesFragmentViewModel @Inject constructor(
             .setEnablePlaceholders(false)
             .setPrefetchDistance(10)
             .build()
+
 
        return QuotesListing(
             articles = sourceFactory.toLiveData(pageConfig),
