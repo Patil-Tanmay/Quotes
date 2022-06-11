@@ -2,7 +2,7 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tanmay.quotes.R
@@ -12,7 +12,7 @@ import com.tanmay.quotes.databinding.ItemQuoteBinding
 class QuotesAdapter(
     val onBookMarkClick: (FetchedQuotesData) -> Unit,
     val onCopyClick : (String) -> Unit
-) : PagingDataAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
+) : PagedListAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
     override fun onBindViewHolder(holder: QuotesViewHolder, position: Int) {
@@ -60,7 +60,7 @@ class QuotesAdapter(
                     }
                 )
                 savedQuoteEmpty.setOnClickListener {
-                    val position = bindingAdapterPosition
+                    val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onBookMarkClick(position)
                         notifyItemChanged(position)
@@ -68,7 +68,7 @@ class QuotesAdapter(
                 }
 
                 copyText.setOnClickListener {
-                    val position = bindingAdapterPosition
+                    val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onCopyClick(position)
                     }

@@ -31,6 +31,5 @@ data class FetchedQuotesData(
     val quoteAuthor: String,
     val quoteGenre: String,
     val quoteText: String,
-    var isBookmarked: Boolean?=null,
-    val TAG: String
+    var isBookmarked: Boolean?=null
 )

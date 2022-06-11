@@ -16,6 +16,7 @@ interface QuotesApi {
         @Query("limit") limit:Int
     ) : Quotes
 
+    @GET("api/v3/quotes")
     suspend fun getQuotesByGenre(
         @Query("genre") tag: String,
         @Query("page") page:Int,

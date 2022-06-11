@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.paging.PagedList
+import androidx.paging.toLiveData
+import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
+import com.tanmay.quotes.data.QuotesListing
 import com.tanmay.quotes.data.models.QuotesGenres
+import com.tanmay.quotes.data.paging.QuotesDataSourceFactory
 import com.tanmay.quotes.data.repository.QuotesRepository
+import com.tanmay.quotes.db.QuotesDatabase
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -20,13 +23,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@ExperimentalPagingApi
 @HiltViewModel
 class QuotesFragmentViewModel @Inject constructor(
-    private val repository: QuotesRepository
+    private val repository: QuotesRepository,
+    private val api: QuotesApi,
+    private val db : QuotesDatabase
 ) : ViewModel() {
 
-    private val _fetchedQuotes = MutableSharedFlow<PagingData<FetchedQuotesData>>()
+    private val _fetchedQuotes = MutableSharedFlow<PagedList<FetchedQuotesData>>()
     val fetchedQuotes get() = _fetchedQuotes
 
     private val _quotesGenres = MutableStateFlow<Resource<QuotesGenres>>(Resource.Loading())
@@ -36,6 +40,30 @@ class QuotesFragmentViewModel @Inject constructor(
             repository.getQuotesGenres().collect {
                 _quotesGenres.emit(it)
             }
+    }
+
+    fun getQuotes(): QuotesListing{
+        val sourceFactory = QuotesDataSourceFactory(
+            scope = viewModelScope,
+            category = "All",
+            quotesApi = api,
+            db = db
+        )
+
+        val pageConfig = PagedList.Config.Builder()
+            .setPageSize(20)
+            .setEnablePlaceholders(false)
+            .setPrefetchDistance(10)
+            .build()
+
+       return QuotesListing(
+            articles = sourceFactory.toLiveData(pageConfig),
+            refreshState = sourceFactory.initLoadState,
+            loadMoreState = sourceFactory.loadMoreState,
+            onRefresh = {
+                sourceFactory.source?.invalidate()
+            }
+        )
     }
 
 

@@ -80,14 +80,14 @@ class SavedQuotesAdapter(
                 )
 
                 savedQuoteEmpty.setOnClickListener {
-                    val position = bindingAdapterPosition
+                    val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onBookmarkClick(position)
                     }
                 }
 
                 copyText.setOnClickListener {
-                    val position = bindingAdapterPosition
+                    val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         onCopyClick(position)
                     }

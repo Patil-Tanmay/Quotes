@@ -1,7 +1,7 @@
 package com.tanmay.quotes.db
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagingSource
+import androidx.paging.DataSource
 import androidx.room.*
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
@@ -25,8 +25,8 @@ interface QuotesDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFetchedQuote(quote: List<FetchedQuotesData>)
 
-    @Query("SELECT * FROM fetched_quotes WHERE TAG=:tag")
-    fun getAllFetchedQuotes(tag: String): PagingSource<Int, FetchedQuotesData>
+    @Query("SELECT * FROM fetched_quotes WHERE quoteGenre=:genre")
+    fun getAllFetchedQuotes(genre: String): List<FetchedQuotesData>
 
     @Update
     suspend fun updateFetchedQuote(data: FetchedQuotesData)

@@ -7,8 +7,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
@@ -20,7 +18,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagingApi::class)
 @AndroidEntryPoint
 class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
@@ -44,6 +41,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         genresAdapter = GenreAdapter()
 
+        val quotesListing = viewModel.getQuotes()
+
         quotesAdapter = QuotesAdapter(
             onBookMarkClick = { fetchedQuotes ->
                 val qData = QuotesData(
@@ -65,13 +64,17 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         setUpQuotesAdapter()
 
         binding.btnRetry.setOnClickListener {
-            quotesAdapter.retry()
+            quotesListing.onRefresh.invoke()
+        }
+
+        quotesListing.articles.observe(viewLifecycleOwner) {
+            quotesAdapter.submitList(it)
         }
 
         lifecycleScope.launch {
-            viewModel.fetchedQuotes.distinctUntilChanged().collectLatest {
-                quotesAdapter.submitData(it)
-            }
+//            viewModel.fetchedQuotes.distinctUntilChanged().collectLatest {
+//                quotesAdapter.submitData(it)
+//            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -83,27 +86,27 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         }
 
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            quotesAdapter.addLoadStateListener { loadState ->
-                binding.apply {
-
-                    shimmerLayout.isVisible = loadState.mediator?.refresh is LoadState.Loading
-                    recyclerViewQuote.isVisible =
-                        loadState.mediator?.refresh is LoadState.NotLoading
-
-                    genreRec.isVisible =
-                        loadState.mediator?.refresh is LoadState.NotLoading
-
-                    btnRetry.isVisible = loadState.mediator?.refresh is LoadState.Error
-                    txtViewError.isVisible = loadState.mediator?.refresh is LoadState.Error
-
-                    if (recyclerViewQuote.isVisible) {
-                        shimmerLayout.stopShimmer()
-                    }
-
-                }
-            }
-        }
+//        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+//            quotesAdapter.addLoadStateListener { loadState ->
+//                binding.apply {
+//
+//                    shimmerLayout.isVisible = loadState.mediator?.refresh is LoadState.Loading
+//                    recyclerViewQuote.isVisible =
+//                        loadState.mediator?.refresh is LoadState.NotLoading
+//
+//                    genreRec.isVisible =
+//                        loadState.mediator?.refresh is LoadState.NotLoading
+//
+//                    btnRetry.isVisible = loadState.mediator?.refresh is LoadState.Error
+//                    txtViewError.isVisible = loadState.mediator?.refresh is LoadState.Error
+//
+//                    if (recyclerViewQuote.isVisible) {
+//                        shimmerLayout.stopShimmer()
+//                    }
+//
+//                }
+//            }
+//        }
 
     }
 
@@ -119,9 +122,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         binding.apply {
             recyclerViewQuote.setHasFixedSize(true)
 
-            recyclerViewQuote.adapter = quotesAdapter.withLoadStateFooter(
-                footer = QuotesLoadStateAdapter { quotesAdapter.retry() }
-            )
+            recyclerViewQuote.adapter = quotesAdapter
         }
     }
 

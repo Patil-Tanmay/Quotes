@@ -4,7 +4,6 @@ import androidx.paging.*
 import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
-import com.tanmay.quotes.data.QuotesRemoteMediator
 import com.tanmay.quotes.data.models.QuotesGenres
 import com.tanmay.quotes.db.QuotesDatabase
 import com.tanmay.quotes.utils.Resource
