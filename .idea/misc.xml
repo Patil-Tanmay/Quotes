@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/drawable/ic_check.xml" value="0.1075" />
+        <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/fragment_quotes.xml" value="0.2" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/genre_chip.xml" value="0.264" />
+        <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/item_genre_shimmer.xml" value="0.15574324324324323" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/item_quote.xml" value="0.24010416666666667" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/item_quote_shimmer.xml" value="0.1" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/quotes_load_footer.xml" value="0.14305555555555555" />

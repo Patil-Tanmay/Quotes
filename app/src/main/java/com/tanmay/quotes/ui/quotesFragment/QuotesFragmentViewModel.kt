@@ -10,6 +10,7 @@ import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.data.QuotesListing
+import com.tanmay.quotes.data.models.GenreStatus
 import com.tanmay.quotes.data.models.QuotesGenres
 import com.tanmay.quotes.data.paging.QuotesDataSourceFactory
 import com.tanmay.quotes.data.repository.QuotesRepository
@@ -33,15 +34,36 @@ class QuotesFragmentViewModel @Inject constructor(
     private val _fetchedQuotes = MutableSharedFlow<PagedList<FetchedQuotesData>>()
     val fetchedQuotes get() = _fetchedQuotes
 
-    private val _quotesGenres = MutableStateFlow<Resource<QuotesGenres>>(Resource.Loading())
+    private val _quotesGenres = MutableStateFlow<Resource<List<GenreStatus>>>(Resource.Loading())
     val quotesGenres get() = _quotesGenres
 
+    private var genreList: List<GenreStatus> = emptyList()
     private lateinit var quotesListing: QuotesListing
+
+    init {
+        viewModelScope.launch {
+            _quotesGenres.emit(Resource.Loading())
+        }
+    }
 
     fun getQuotesGenres() = viewModelScope.launch {
             repository.getQuotesGenres().collect {
                 _quotesGenres.emit(it)
+                if (it is Resource.Success){
+                    genreList = it.dataFetched
+                }
             }
+    }
+
+    fun updateGenreStatus(genreName: String, position: Int?){
+        if (position!= null) {
+            genreList.map {
+                it.isChecked = it.genre == genreName
+            }
+            viewModelScope.launch {
+                _quotesGenres.emit(Resource.Success(genreList))
+            }
+        }
     }
 
     fun getQuotes(): QuotesListing{

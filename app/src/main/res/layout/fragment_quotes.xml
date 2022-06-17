@@ -12,8 +12,18 @@
         android:layout_height="match_parent">
 
         <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmerLayout"
             android:layout_width="match_parent"
+            android:id="@+id/shimmerLayoutGenre"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/item_genre_shimmer"/>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerLayoutQuotes"
+            android:layout_width="match_parent"
+            android:layout_below="@id/shimmerLayoutGenre"
             android:layout_height="match_parent">
 
             <LinearLayout
@@ -67,6 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
+            tools:visibility="gone"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView

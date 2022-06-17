@@ -3,6 +3,7 @@ package com.tanmay.quotes.ui.quotesFragment
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -23,7 +24,6 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     private var _binding: FragmentQuotesBinding? = null
     private val binding get() = _binding!!
 
-
     private val viewModel: QuotesFragmentViewModel by activityViewModels()
 
     private lateinit var quotesAdapter: QuotesAdapter
@@ -38,7 +38,11 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         viewModel.getQuotesGenres()
 
-        genresAdapter = GenreAdapter()
+        genresAdapter = GenreAdapter(){ genreName, position ->
+            //make api call to change list of quotes according to given Genre
+//            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.updateGenreStatus(genreName, position)
+        }
 
         val quotesListing = viewModel.getQuotes()
 
@@ -72,8 +76,19 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.quotesGenres.collect {
-                if (it is Resource.Success) {
-                    genresAdapter.submitGenres(it.data!!)
+                when(it) {
+                    is Resource.Success -> {
+                        genresAdapter.submitGenres(it.data!!)
+                        binding.shimmerLayoutGenre.visibility = View.GONE
+                    }
+
+                    is Resource.Loading -> {
+                        binding.shimmerLayoutGenre.visibility = View.VISIBLE
+                    }
+
+                    is Resource.Error -> {
+                        Toast.makeText(context,"Unable to fetch Genres.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -85,12 +100,12 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                         when(it){
                             NetworkState.LOADING -> {
                                 if(binding.recyclerViewQuote.canScrollVertically(1)){
-                                    binding.shimmerLayout.visibility = View.GONE
+                                    binding.shimmerLayoutQuotes.visibility = View.GONE
                                     binding.recyclerViewQuote.visibility = View.VISIBLE
                                     binding.genreRec.visibility = View.VISIBLE
                                     binding.btnRetry.visibility = View.GONE
                                 }else {
-                                    binding.shimmerLayout.visibility = View.VISIBLE
+                                    binding.shimmerLayoutQuotes.visibility = View.VISIBLE
                                     binding.recyclerViewQuote.visibility = View.GONE
                                     binding.genreRec.visibility = View.GONE
                                     binding.btnRetry.visibility = View.GONE
@@ -98,7 +113,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                             }
 
                             NetworkState.IDLE -> {
-                                binding.shimmerLayout.visibility = View.GONE
+                                binding.shimmerLayoutQuotes.visibility = View.GONE
                                 binding.recyclerViewQuote.visibility = View.VISIBLE
                                 binding.genreRec.visibility = View.VISIBLE
                                 binding.btnRetry.visibility = View.GONE
@@ -159,12 +174,12 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     }
 
     override fun onResume() {
-        binding.shimmerLayout.startShimmer()
+        binding.shimmerLayoutQuotes.startShimmer()
         super.onResume()
     }
 
     override fun onPause() {
-        binding.shimmerLayout.stopShimmer()
+        binding.shimmerLayoutQuotes.stopShimmer()
         super.onPause()
     }
 

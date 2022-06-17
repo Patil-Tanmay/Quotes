@@ -1,13 +1,11 @@
 package com.tanmay.quotes.data.repository
 
-import androidx.paging.*
 import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
-import com.tanmay.quotes.data.models.QuotesGenres
+import com.tanmay.quotes.data.models.GenreStatus
 import com.tanmay.quotes.db.QuotesDatabase
 import com.tanmay.quotes.utils.Resource
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,11 +27,17 @@ class QuotesRepository @Inject constructor(
 //        ).flow
 
 
-    fun getQuotesGenres() = flow<Resource<QuotesGenres>> {
+    fun getQuotesGenres() = flow<Resource<List<GenreStatus>>> {
         try {
             val genres = quotesApi.getGenres()
             if (genres.statusCode == 200) {
-                emit(Resource.Success(genres))
+                val genreWithStatus = genres.data.map {
+                    GenreStatus(
+                        genre = it,
+                        isChecked = false
+                    )
+                }
+                emit(Resource.Success(genreWithStatus))
             } else {
                 emit(Resource.Error(Throwable("Unable to Make Request")))
             }
