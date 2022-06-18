@@ -44,20 +44,20 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.setupWithNavController(navController)
 
 
-        viewModelQuotesFragment.copyQuote.observe(this, { quoteText ->
+        viewModelQuotesFragment.copyQuote.observe(this) { quoteText ->
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show()
             val clip: ClipData = ClipData.newPlainText("Quote Text", quoteText)
             clipboard.setPrimaryClip(clip)
-        })
+        }
 
-        viewModelSavedQuotes.copyQuote.observe(this,{ quoteText ->
+        viewModelSavedQuotes.copyQuote.observe(this) { quoteText ->
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show()
             val clip: ClipData = ClipData.newPlainText("Quote Text", quoteText)
             clipboard.setPrimaryClip(clip)
-        })
-        
+        }
+
     }
 }
 

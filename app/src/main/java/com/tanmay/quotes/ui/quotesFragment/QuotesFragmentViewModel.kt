@@ -11,16 +11,13 @@ import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.data.QuotesListing
 import com.tanmay.quotes.data.models.GenreStatus
-import com.tanmay.quotes.data.models.QuotesGenres
 import com.tanmay.quotes.data.paging.QuotesDataSourceFactory
 import com.tanmay.quotes.data.repository.QuotesRepository
 import com.tanmay.quotes.db.QuotesDatabase
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +25,7 @@ import javax.inject.Inject
 class QuotesFragmentViewModel @Inject constructor(
     private val repository: QuotesRepository,
     private val api: QuotesApi,
-    private val db : QuotesDatabase
+    private val db: QuotesDatabase
 ) : ViewModel() {
 
     private val _fetchedQuotes = MutableSharedFlow<PagedList<FetchedQuotesData>>()
@@ -47,16 +44,16 @@ class QuotesFragmentViewModel @Inject constructor(
     }
 
     fun getQuotesGenres() = viewModelScope.launch {
-            repository.getQuotesGenres().collect {
-                _quotesGenres.emit(it)
-                if (it is Resource.Success){
-                    genreList = it.dataFetched
-                }
+        repository.getQuotesGenres().collect {
+            _quotesGenres.emit(it)
+            if (it is Resource.Success) {
+                genreList = it.dataFetched
             }
+        }
     }
 
-    fun updateGenreStatus(genreName: String, position: Int?){
-        if (position!= null) {
+    fun updateGenreStatus(genreName: String, position: Int?) {
+        if (position != null) {
             genreList.map {
                 it.isChecked = it.genre == genreName
             }
@@ -66,7 +63,7 @@ class QuotesFragmentViewModel @Inject constructor(
         }
     }
 
-    fun getQuotes(): QuotesListing{
+    fun getQuotes(): QuotesListing {
         val sourceFactory = QuotesDataSourceFactory(
             scope = viewModelScope,
             category = "All",
@@ -81,12 +78,17 @@ class QuotesFragmentViewModel @Inject constructor(
             .build()
 
 
-       return QuotesListing(
+        return QuotesListing(
             articles = sourceFactory.toLiveData(pageConfig),
             refreshState = sourceFactory.initLoadState,
             loadMoreState = sourceFactory.loadMoreState,
-            onRefresh = {
-                sourceFactory.source?.invalidate()
+            onRefresh = { genreName, isRefresh ->
+                if (isRefresh) {
+                    sourceFactory.source?.invalidate()
+                } else {
+                    sourceFactory.genre = genreName ?: "All"
+                    sourceFactory.source?.invalidate()
+                }
             }
         )
     }

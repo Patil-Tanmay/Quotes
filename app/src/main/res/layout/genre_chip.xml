@@ -6,7 +6,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="7dp"
-    android:checkable="true"
+    android:checkable="false"
     android:clickable="true"
     android:textColor="@color/white"
     app:checkedIcon="@drawable/ic_check"

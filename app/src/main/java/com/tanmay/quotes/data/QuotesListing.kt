@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 data class QuotesListing(
     val articles: LiveData<PagedList<FetchedQuotesData>>,
-    val refreshState : StateFlow<NetworkState>,
-    val loadMoreState : StateFlow<NetworkState>,
-    val onRefresh: () -> Unit
+    val refreshState: StateFlow<NetworkState>,
+    val loadMoreState: StateFlow<NetworkState>,
+    val onRefresh: (genreNme: String?, isRefresh: Boolean) -> Unit
 )

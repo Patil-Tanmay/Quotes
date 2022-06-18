@@ -21,10 +21,13 @@ class QuotesDataSourceFactory(
     var source: QuotesDataSource? = null
         private set
 
+    var genre= category
+
     override fun create(): DataSource<Int, FetchedQuotesData> {
+        val genreInternal = genre
         val quotesDataSource = QuotesDataSource(
             scope = scope,
-            category = category,
+            category = genreInternal,
             quotesApi = quotesApi,
             db = db,
             initLoadState = initLoadState,
@@ -33,4 +36,5 @@ class QuotesDataSourceFactory(
         source = quotesDataSource
         return quotesDataSource
     }
+
 }

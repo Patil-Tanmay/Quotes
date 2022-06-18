@@ -38,13 +38,15 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         viewModel.getQuotesGenres()
 
+        val quotesListing = viewModel.getQuotes()
+
         genresAdapter = GenreAdapter(){ genreName, position ->
             //make api call to change list of quotes according to given Genre
 //            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            viewModel.updateGenreStatus(genreName, position)
+//            viewModel.updateGenreStatus(genreName, position)
+            quotesListing.onRefresh(genreName, false)
+            binding.genreText.text = genreName
         }
-
-        val quotesListing = viewModel.getQuotes()
 
         quotesAdapter = QuotesAdapter(
             onBookMarkClick = { fetchedQuotes ->
@@ -67,7 +69,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         setUpQuotesAdapter()
 
         binding.btnRetry.setOnClickListener {
-            quotesListing.onRefresh.invoke()
+            quotesListing.onRefresh.invoke(null, true)
         }
 
         quotesListing.articles.observe(viewLifecycleOwner) {
@@ -78,15 +80,19 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             viewModel.quotesGenres.collect {
                 when(it) {
                     is Resource.Success -> {
+                        binding.genreText.visibility = View.VISIBLE
                         genresAdapter.submitGenres(it.data!!)
                         binding.shimmerLayoutGenre.visibility = View.GONE
                     }
 
                     is Resource.Loading -> {
+                        binding.genreText.visibility = View.GONE
                         binding.shimmerLayoutGenre.visibility = View.VISIBLE
                     }
 
                     is Resource.Error -> {
+                        binding.genreText.visibility = View.GONE
+                        binding.shimmerLayoutGenre.visibility = View.GONE
                         Toast.makeText(context,"Unable to fetch Genres.", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -121,6 +127,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
                             else -> {
                                 binding.btnRetry.visibility = View.VISIBLE
+                                binding.shimmerLayoutQuotes.visibility = View.GONE
                             }
                         }
                     }
@@ -130,7 +137,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            quotesListing.onRefresh()
+            quotesListing.onRefresh(null, true)
         }
 
 

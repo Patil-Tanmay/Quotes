@@ -37,20 +37,20 @@ class GenreAdapter(
         fun bind(genreItem: GenreStatus) {
             binding.chipText.text = genreItem.genre
 
-            binding.chipText.isChecked = genreItem.isChecked
+//            binding.chipText.isChecked = genreItem.isChecked
 
-            binding.chipText.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    Toast.makeText(binding.root.context, "$isChecked", Toast.LENGTH_SHORT).show()
+            binding.chipText.setOnClickListener {
+//                if (isChecked) {
+//                    Toast.makeText(binding.root.context, "$isChecked", Toast.LENGTH_SHORT).show()
 //                    disableCheckedStatus(genre.genre)
                     onGenreClicked(genreItem.genre, generes.indexOf(genreItem))
 //                    notifyDataSetChanged()
-                } else {
-                    Toast.makeText(binding.root.context, "$isChecked", Toast.LENGTH_SHORT).show()
-                    onGenreClicked("All",null)
+//                } else {
+//                    Toast.makeText(binding.root.context, "$isChecked", Toast.LENGTH_SHORT).show()
+//                    onGenreClicked("All",null)
 //                    disableCheckedStatus(null)
 //                    notifyDataSetChanged()
-                }
+//                }
             }
         }
     }
