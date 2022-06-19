@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/quotesFragment"
+        android:id="@+id/quotes"
         android:title="Quotes"
         android:icon="@drawable/ic_quote_icon"
         />
 
     <item
-        android:id="@+id/savedQuoteFragment"
+        android:id="@+id/savedQuotes"
         android:title="Saved"
         android:icon="@drawable/ic_favourite_quote_empty"/>
 
