@@ -4,17 +4,22 @@ package com.tanmay.quotes
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.tanmay.quotes.databinding.ActivityMainBinding
+import com.tanmay.quotes.ui.quotesFragment.QuotesFragment
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
+import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuoteFragment
 import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,18 +36,44 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModelSavedQuotes by viewModels<SavedQuotesViewModel>()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //attaching my Fragment container to the bottom navigation
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-        navController = navHostFragment.findNavController()
+//        val navHostFragment =
+//            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+//        navController = navHostFragment.findNavController()
+//
+//        binding.bottomNavView.setupWithNavController(navController)
 
-        binding.bottomNavView.setupWithNavController(navController)
+        val savedFragment = SavedQuoteFragment()
+        val quotesFrag = QuotesFragment()
 
+
+        val ft = supportFragmentManager
+        ft.beginTransaction().add(R.id.fragment_container, savedFragment, "Saved")
+            .hide(SavedQuoteFragment()).commit()
+        ft.beginTransaction().add(R.id.fragment_container, quotesFrag, "Quotes").commit()
+
+
+        binding.bottomNavView.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.quotes -> {
+                    ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
+                    true
+                }
+
+                R.id.savedQuotes ->{
+                    ft.beginTransaction().hide(quotesFrag).show(savedFragment).commit()
+//                    ft.beginTransaction().show(SavedQuoteFragment()).commit()
+                    true
+                }
+                else -> {true}
+            }
+        }
 
         viewModelQuotesFragment.copyQuote.observe(this) { quoteText ->
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
