@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -36,6 +37,14 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModelSavedQuotes by viewModels<SavedQuotesViewModel>()
 
+    private lateinit var ft: FragmentManager
+
+    private lateinit var savedFragment : SavedQuoteFragment
+
+    private lateinit var quotesFrag : QuotesFragment
+
+//    private var isSavedQuotesFrag : Boolean = false
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +58,11 @@ class MainActivity : AppCompatActivity() {
 //
 //        binding.bottomNavView.setupWithNavController(navController)
 
-        val savedFragment = SavedQuoteFragment()
-        val quotesFrag = QuotesFragment()
+        savedFragment = SavedQuoteFragment()
+        quotesFrag = QuotesFragment()
 
 
-        val ft = supportFragmentManager
+        ft = supportFragmentManager
         ft.beginTransaction().add(R.id.fragment_container, quotesFrag, "Quotes").commit()
         ft.beginTransaction().add(R.id.fragment_container, savedFragment, "Saved")
             .hide(savedFragment).commit()
@@ -89,6 +98,15 @@ class MainActivity : AppCompatActivity() {
             clipboard.setPrimaryClip(clip)
         }
 
+    }
+
+    override fun onBackPressed() {
+        if (savedFragment.isVisible){
+            binding.bottomNavView.selectedItemId = R.id.quotes
+            ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
+        }else{
+            super.onBackPressed()
+        }
     }
 }
 
