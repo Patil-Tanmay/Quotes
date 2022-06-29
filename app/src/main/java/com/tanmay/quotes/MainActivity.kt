@@ -54,9 +54,9 @@ class MainActivity : AppCompatActivity() {
 
 
         val ft = supportFragmentManager
-        ft.beginTransaction().add(R.id.fragment_container, savedFragment, "Saved")
-            .hide(SavedQuoteFragment()).commit()
         ft.beginTransaction().add(R.id.fragment_container, quotesFrag, "Quotes").commit()
+        ft.beginTransaction().add(R.id.fragment_container, savedFragment, "Saved")
+            .hide(savedFragment).commit()
 
 
         binding.bottomNavView.setOnItemSelectedListener {
