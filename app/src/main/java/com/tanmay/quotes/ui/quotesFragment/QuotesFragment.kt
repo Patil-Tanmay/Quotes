@@ -62,6 +62,9 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             },
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
+            },
+            onRootClick = {
+
             }
         )
 

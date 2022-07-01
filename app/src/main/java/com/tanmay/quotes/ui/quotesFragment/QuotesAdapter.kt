@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 class QuotesAdapter(
     val onBookMarkClick: (FetchedQuotesData) -> Unit,
-    val onCopyClick : (String) -> Unit
+    val onCopyClick : (String) -> Unit,
+    val onRootClick : (String) -> Unit
 ) : PagedListAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
@@ -68,6 +69,10 @@ class QuotesAdapter(
                         bookmarkClickImageChange(position)
                         notifyItemChanged(position)
                     }
+                }
+
+                binding.root.setOnClickListener {
+
                 }
 
                 copyText.setOnClickListener {
