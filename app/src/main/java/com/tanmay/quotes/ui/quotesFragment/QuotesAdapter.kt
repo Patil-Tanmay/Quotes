@@ -72,7 +72,7 @@ class QuotesAdapter(
                 }
 
                 binding.root.setOnClickListener {
-
+                    onRootClick(data.quoteText)
                 }
 
                 copyText.setOnClickListener {

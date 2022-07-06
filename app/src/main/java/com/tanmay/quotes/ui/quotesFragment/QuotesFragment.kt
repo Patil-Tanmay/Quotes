@@ -2,17 +2,21 @@ package com.tanmay.quotes.ui.quotesFragment
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
+import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
 import com.tanmay.quotes.utils.NetworkState
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +44,9 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         val quotesListing = viewModel.getQuotes()
 
-        genresAdapter = GenreAdapter(){ genreName, position ->
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+
+        genresAdapter = GenreAdapter() { genreName, position ->
             //make api call to change list of quotes according to given Genre
 //            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
 //            viewModel.updateGenreStatus(genreName, position)
@@ -65,6 +71,11 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             },
             onRootClick = {
 
+                bottomNav.visibility = View.GONE
+
+                    parentFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, DetailedQuotesFragment()).addToBackStack("Quotes")
+                        .commit()
             }
         )
 
@@ -81,7 +92,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.quotesGenres.collect {
-                when(it) {
+                when (it) {
                     is Resource.Success -> {
                         binding.genreText.visibility = View.VISIBLE
                         genresAdapter.submitGenres(it.data!!)
@@ -96,24 +107,25 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                     is Resource.Error -> {
                         binding.genreText.visibility = View.GONE
                         binding.shimmerLayoutGenre.visibility = View.GONE
-                        Toast.makeText(context,"Unable to fetch Genres.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    quotesListing.refreshState.collect{
-                        when(it){
+                    quotesListing.refreshState.collect {
+                        when (it) {
                             NetworkState.LOADING -> {
-                                if(binding.recyclerViewQuote.canScrollVertically(1)){
+                                if (binding.recyclerViewQuote.canScrollVertically(1)) {
                                     binding.shimmerLayoutQuotes.visibility = View.GONE
                                     binding.recyclerViewQuote.visibility = View.VISIBLE
                                     binding.genreRec.visibility = View.VISIBLE
                                     binding.btnRetry.visibility = View.GONE
-                                }else {
+                                } else {
                                     binding.shimmerLayoutQuotes.visibility = View.VISIBLE
                                     binding.recyclerViewQuote.visibility = View.GONE
                                     binding.genreRec.visibility = View.GONE
@@ -168,10 +180,11 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
     }
 
-    private fun setupGenreAdapter(){
+    private fun setupGenreAdapter() {
         binding.apply {
             genreRec.setHasFixedSize(true)
-            genreRec.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+            genreRec.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             genreRec.adapter = genresAdapter
         }
     }

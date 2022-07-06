@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavView.selectedItemId = R.id.quotes
             ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
         }else{
+            binding.bottomNavView.visibility = View.VISIBLE
             super.onBackPressed()
         }
     }
