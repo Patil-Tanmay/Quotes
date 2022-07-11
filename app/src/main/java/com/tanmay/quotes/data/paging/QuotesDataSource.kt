@@ -1,6 +1,7 @@
 package com.tanmay.quotes.data.paging
 
 import androidx.paging.PageKeyedDataSource
+import androidx.room.withTransaction
 import com.tanmay.quotes.api.Data
 import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
@@ -26,48 +27,57 @@ class QuotesDataSource(
     ) {
         scope.launch {
             initLoadState.emit(NetworkState.LOADING)
-//            if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()){
             try {
-                val quotes = if (category == "All") {
-                    quotesApi.getQuotes(
-                        page = 1,
-                        limit = 50
-                    )
-                } else {
-                    quotesApi.getQuotesByGenre(
-                        tag = category,
-                        page = 1,
-                        limit = 50
-                    )
-                }
-                if (quotes.statusCode != 200) throw IllegalStateException("Cannot be empty")
-
-                val savedQuotes = db.quotesDao().getAllSavedQuotes()
-                val fetchedQuotesData = quotes.data.map { qData ->
-
-                    if (checkQuoteBookMarked(qData, savedQuotes)) {
-                        FetchedQuotesData(
-                            _id = qData._id,
-                            quoteAuthor = qData.quoteAuthor,
-                            quoteGenre = qData.quoteGenre,
-                            quoteText = qData.quoteText,
-                            isBookmarked = true
+//                if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()) {
+                    val quotes = if (category == "All") {
+                        quotesApi.getQuotes(
+                            page = 1,
+                            limit = 50
                         )
                     } else {
-                        FetchedQuotesData(
-                            _id = qData._id,
-                            quoteAuthor = qData.quoteAuthor,
-                            quoteGenre = qData.quoteGenre,
-                            quoteText = qData.quoteText
+                        quotesApi.getQuotesByGenre(
+                            tag = category,
+                            page = 1,
+                            limit = 50
                         )
                     }
+
+                    if (quotes.statusCode != 200) throw IllegalStateException("Cannot be empty")
+
+                    val savedQuotes = db.quotesDao().getAllSavedQuotes()
+                    val fetchedQuotesData = quotes.data.map { qData ->
+
+                        if (checkQuoteBookMarked(qData, savedQuotes)) {
+                            FetchedQuotesData(
+                                _id = qData._id,
+                                quoteAuthor = qData.quoteAuthor,
+                                quoteGenre = qData.quoteGenre,
+                                quoteText = qData.quoteText,
+                                isBookmarked = true
+                            )
+                        } else {
+                            FetchedQuotesData(
+                                _id = qData._id,
+                                quoteAuthor = qData.quoteAuthor,
+                                quoteGenre = qData.quoteGenre,
+                                quoteText = qData.quoteText
+                            )
+                        }
+                    }
+                    db.withTransaction {
+                        db.quotesDao().deleteFetchedQuote()
+                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
+                    }
+                val d = db.withTransaction {
+                    db.quotesDao().getAllFetchedQuotes(category)
                 }
-//                    db.withTransaction {
-//                        db.quotesDao().deleteFetchedQuote()
-//                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
-//                    }
-                callback.onResult(fetchedQuotesData, null, 2)
-                initLoadState.emit(NetworkState.IDLE)
+                    callback.onResult(d, null, 2)
+                    initLoadState.emit(NetworkState.IDLE)
+//                }else{
+//                    val fetchedQuotesData = db.quotesDao().getAllFetchedQuotes(category)
+//                    callback.onResult(fetchedQuotesData, null, 2)
+//                    initLoadState.emit(NetworkState.IDLE)
+//                }
             } catch (e: Exception) {
                 initLoadState.emit(NetworkState.ERROR)
             }
@@ -92,49 +102,49 @@ class QuotesDataSource(
         scope.launch {
             if (loadMoreState.value == NetworkState.LOADING) return@launch
             initLoadState.emit(NetworkState.LOADING)
-//            if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()){
             try {
-                val quotes = if (category == "All") {
-                    quotesApi.getQuotes(
-                        page = params.key,
-                        limit = 50
-                    )
-                } else {
-                    quotesApi.getQuotesByGenre(
-                        tag = category,
-                        page = params.key,
-                        limit = 50
-                    )
-                }
-                if (quotes.statusCode != 200) throw IllegalStateException("Cannot be empty")
-
-                val savedQuotes = db.quotesDao().getAllSavedQuotes()
-                val fetchedQuotesData = quotes.data.map { qData ->
-
-                    if (checkQuoteBookMarked(qData, savedQuotes)) {
-                        FetchedQuotesData(
-                            _id = qData._id,
-                            quoteAuthor = qData.quoteAuthor,
-                            quoteGenre = qData.quoteGenre,
-                            quoteText = qData.quoteText,
-                            isBookmarked = true
+//                if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()) {
+                    val quotes = if (category == "All") {
+                        quotesApi.getQuotes(
+                            page = params.key,
+                            limit = 50
                         )
                     } else {
-                        FetchedQuotesData(
-                            _id = qData._id,
-                            quoteAuthor = qData.quoteAuthor,
-                            quoteGenre = qData.quoteGenre,
-                            quoteText = qData.quoteText
+                        quotesApi.getQuotesByGenre(
+                            tag = category,
+                            page = params.key,
+                            limit = 50
                         )
                     }
-                }
-//                    db.withTransaction {
-//                        db.quotesDao().deleteFetchedQuote()
-//                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
-//                    }
-                val nextPageKey = quotes.pagination.nextPage
-                callback.onResult(fetchedQuotesData, nextPageKey)
-                initLoadState.emit(NetworkState.IDLE)
+                    if (quotes.statusCode != 200) throw IllegalStateException("Cannot be empty")
+
+                    val savedQuotes = db.quotesDao().getAllSavedQuotes()
+                    val fetchedQuotesData = quotes.data.map { qData ->
+
+                        if (checkQuoteBookMarked(qData, savedQuotes)) {
+                            FetchedQuotesData(
+                                _id = qData._id,
+                                quoteAuthor = qData.quoteAuthor,
+                                quoteGenre = qData.quoteGenre,
+                                quoteText = qData.quoteText,
+                                isBookmarked = true
+                            )
+                        } else {
+                            FetchedQuotesData(
+                                _id = qData._id,
+                                quoteAuthor = qData.quoteAuthor,
+                                quoteGenre = qData.quoteGenre,
+                                quoteText = qData.quoteText
+                            )
+                        }
+                    }
+                    db.withTransaction {
+                        db.quotesDao().deleteFetchedQuote()
+                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
+                    }
+                    val nextPageKey = quotes.pagination.nextPage
+                    callback.onResult(fetchedQuotesData, nextPageKey)
+                    initLoadState.emit(NetworkState.IDLE)
             } catch (e: Exception) {
                 initLoadState.emit(NetworkState.ERROR)
             }

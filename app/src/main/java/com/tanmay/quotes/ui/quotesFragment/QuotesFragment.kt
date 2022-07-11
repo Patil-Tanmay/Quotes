@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
@@ -87,8 +88,26 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         }
 
         quotesListing.articles.observe(viewLifecycleOwner) {
-            quotesAdapter.submitList(it)
+                viewModel.setQuotesdata(it)
         }
+
+        viewModel.articles.observe(viewLifecycleOwner) {
+                Log.d("TAGG", "onViewCreated: ${it.size}")
+                quotesAdapter.submitList(it)
+        }
+
+        binding.recyclerViewQuote.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if(!recyclerView.canScrollVertically(-1)){
+                    
+                }
+            }
+        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.quotesGenres.collect {

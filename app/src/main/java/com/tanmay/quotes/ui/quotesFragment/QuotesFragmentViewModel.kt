@@ -28,14 +28,17 @@ class QuotesFragmentViewModel @Inject constructor(
     private val db: QuotesDatabase
 ) : ViewModel() {
 
-    private val _fetchedQuotes = MutableSharedFlow<PagedList<FetchedQuotesData>>()
-    val fetchedQuotes get() = _fetchedQuotes
+//    private val _fetchedQuotes = MutableSharedFlow<PagedList<FetchedQuotesData>>()
+//    val fetchedQuotes get() = _fetchedQuotes
 
     private val _quotesGenres = MutableStateFlow<Resource<List<GenreStatus>>>(Resource.Loading())
     val quotesGenres get() = _quotesGenres
 
     private var genreList: List<GenreStatus> = emptyList()
     private lateinit var quotesListing: QuotesListing
+
+    private val _articles = MutableLiveData<PagedList<FetchedQuotesData>>()
+    val articles: LiveData<PagedList<FetchedQuotesData>> get() = _articles
 
     init {
         viewModelScope.launch {
@@ -91,6 +94,18 @@ class QuotesFragmentViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    fun updatePagedList(item: FetchedQuotesData){
+        val pagedList = _articles.value
+        if (pagedList?.contains(item) == true){
+            pagedList[pagedList.indexOf(item)]?.isBookmarked = false
+            _articles.value = pagedList!!
+        }
+    }
+
+    fun setQuotesdata(list : PagedList<FetchedQuotesData>){
+        _articles.value = list
     }
 
 

@@ -19,6 +19,16 @@ data class QuotesData(
     var isBookmarked: Boolean?=null
 )
 
+fun QuotesData.toFetchedQuotes() : FetchedQuotesData{
+    return FetchedQuotesData(
+        id = this.id,
+        _id = this._id,
+        quoteAuthor = this.quoteAuthor,
+        quoteGenre = this.quoteGenre,
+        quoteText = this.quoteText,
+        isBookmarked = this.isBookmarked
+    )
+}
 
 @Entity(
     tableName = "fetched_quotes"
