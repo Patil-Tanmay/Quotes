@@ -71,7 +71,7 @@ class QuotesDataSource(
                 val d = db.withTransaction {
                     db.quotesDao().getAllFetchedQuotes(category)
                 }
-                    callback.onResult(d, null, 2)
+                    callback.onResult(fetchedQuotesData, null, 2)
                     initLoadState.emit(NetworkState.IDLE)
 //                }else{
 //                    val fetchedQuotesData = db.quotesDao().getAllFetchedQuotes(category)

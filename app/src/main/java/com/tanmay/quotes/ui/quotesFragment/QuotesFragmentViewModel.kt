@@ -1,11 +1,13 @@
 package com.tanmay.quotes.ui.quotesFragment
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import com.tanmay.quotes.api.Data
 import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
@@ -16,8 +18,10 @@ import com.tanmay.quotes.data.repository.QuotesRepository
 import com.tanmay.quotes.db.QuotesDatabase
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,8 +41,6 @@ class QuotesFragmentViewModel @Inject constructor(
     private var genreList: List<GenreStatus> = emptyList()
     private lateinit var quotesListing: QuotesListing
 
-    private val _articles = MutableLiveData<PagedList<FetchedQuotesData>>()
-    val articles: LiveData<PagedList<FetchedQuotesData>> get() = _articles
 
     init {
         viewModelScope.launch {
@@ -96,17 +98,40 @@ class QuotesFragmentViewModel @Inject constructor(
         )
     }
 
-    fun updatePagedList(item: FetchedQuotesData){
-        val pagedList = _articles.value
-        if (pagedList?.contains(item) == true){
-            pagedList[pagedList.indexOf(item)]?.isBookmarked = false
-            _articles.value = pagedList!!
+    private var page = 1
+    private var quotesList = arrayListOf<Data>()
+    var genre : String = "All"
+
+     val quotesListFlow = MutableSharedFlow<Resource<List<Data>>>()
+    init {
+        viewModelScope.launch {
+            quotesListFlow.emit(Resource.Loading())
+        }
+    }
+    fun getQuotesPagination() {
+        viewModelScope.launch {
+            try {
+                val response = api.getQuotesByGenre("age",page, 10)
+                Log.d("TAGG", "getQuotesPagination: ${response.message}")
+                quotesList += response.data
+                page=page+1
+                quotesListFlow.emit(Resource.Success(quotesList))
+            } catch (e: Exception) {
+                quotesListFlow.emit(Resource.Error(e))
+            }
         }
     }
 
-    fun setQuotesdata(list : PagedList<FetchedQuotesData>){
-        _articles.value = list
+    fun resetPageCount(newGenre: String){
+        quotesList.clear()
+        viewModelScope.launch {
+            quotesListFlow.emit(Resource.Success(quotesList))
+        }
+        page = 1
+        genre = newGenre
+        getQuotesPagination()
     }
+
 
 
     private val mutableCopyQuote = MutableLiveData<String>()
@@ -114,6 +139,14 @@ class QuotesFragmentViewModel @Inject constructor(
 
     fun copyQuote(quoteText: String) {
         mutableCopyQuote.value = quoteText
+    }
+
+    private var _changedItem = MutableStateFlow<FetchedQuotesData?>(null)
+    val changedItem = _changedItem
+    fun updateQuotesState(quote: FetchedQuotesData){
+        viewModelScope.launch {
+            _changedItem.emit(quote)
+        }
     }
 
     fun isBookmarked(qData: QuotesData, fetchedQuote: FetchedQuotesData) {

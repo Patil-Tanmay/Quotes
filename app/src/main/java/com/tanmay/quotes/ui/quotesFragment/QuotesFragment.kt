@@ -1,11 +1,10 @@
 package com.tanmay.quotes.ui.quotesFragment
 
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -19,7 +18,6 @@ import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
 import com.tanmay.quotes.utils.NetworkState
-import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -32,6 +30,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     private val viewModel: QuotesFragmentViewModel by activityViewModels()
 
     private lateinit var quotesAdapter: QuotesAdapter
+    private lateinit var quotesAdapter1: QuotesAdapter1
 
     private lateinit var genresAdapter: GenreAdapter
 
@@ -44,6 +43,12 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         viewModel.getQuotesGenres()
 
         val quotesListing = viewModel.getQuotes()
+
+//        viewModel.getQuotesPagination()
+
+        binding.recyclerViewQuote.visibility = View.VISIBLE
+        binding.shimmerLayoutGenre.visibility = View.GONE
+        binding.shimmerLayoutQuotes.visibility = View.GONE
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
 
@@ -73,12 +78,31 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             onRootClick = {
 
                 bottomNav.visibility = View.GONE
+                val detailedQuotesFragment = DetailedQuotesFragment()
+                val quote = Bundle()
+                quote.putString("QuoteText", it)
+                detailedQuotesFragment.arguments = quote
 
-                    parentFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, DetailedQuotesFragment()).addToBackStack("Quotes")
-                        .commit()
-            }
-        )
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, detailedQuotesFragment).addToBackStack("Quotes")
+                    .commit()
+            })
+
+        quotesAdapter1 = QuotesAdapter1(
+            onBookMarkClick = { fetchedQuotes ->
+
+            },
+            onCopyClick = { quoteText ->
+                viewModel.copyQuote(quoteText)
+            },
+            onRootClick = {
+
+                bottomNav.visibility = View.GONE
+
+                parentFragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, DetailedQuotesFragment()).addToBackStack("Quotes")
+                    .commit()
+            })
 
         setupGenreAdapter()
         setUpQuotesAdapter()
@@ -88,50 +112,73 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         }
 
         quotesListing.articles.observe(viewLifecycleOwner) {
-                viewModel.setQuotesdata(it)
+            quotesAdapter.submitList(it)
         }
 
-        viewModel.articles.observe(viewLifecycleOwner) {
-                Log.d("TAGG", "onViewCreated: ${it.size}")
-                quotesAdapter.submitList(it)
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//                viewModel.quotesListFlow.collect{
+//                    if (it is Resource.Success) {
+//                        quotesAdapter1.submitList(it.data!!)
+//                        quotesAdapter1.notifyDataSetChanged()
+//                    }
+//                }
+//        }
 
-        binding.recyclerViewQuote.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.changedItem.collect { quote ->
+                        if (quote != null) {
+                            val listOfPagedQuotes = quotesAdapter.currentList?.map { it.quoteText }
+                            if (listOfPagedQuotes?.contains(quote.quoteText) == true) {
+                                val index = listOfPagedQuotes.indexOf(quote.quoteText)
+                                quotesAdapter.currentList?.get(index)?.isBookmarked = false
+                                quotesAdapter.notifyItemChanged(index)
+                            }
+                        }
+                    }
+                }//end of launch
+            } // end of repeatOnLifeCycle
+        }//outer Launch
+
+        binding.recyclerViewQuote.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if(!recyclerView.canScrollVertically(-1)){
-                    
+//                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (!recyclerView.canScrollVertically(-1)) {
+//                    viewModel.getQuotesPagination()
                 }
+//                }
             }
         })
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.quotesGenres.collect {
-                when (it) {
-                    is Resource.Success -> {
-                        binding.genreText.visibility = View.VISIBLE
-                        genresAdapter.submitGenres(it.data!!)
-                        binding.shimmerLayoutGenre.visibility = View.GONE
-                    }
-
-                    is Resource.Loading -> {
-                        binding.genreText.visibility = View.GONE
-                        binding.shimmerLayoutGenre.visibility = View.VISIBLE
-                    }
-
-                    is Resource.Error -> {
-                        binding.genreText.visibility = View.GONE
-                        binding.shimmerLayoutGenre.visibility = View.GONE
-                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-        }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewModel.quotesGenres.collect {
+//                when (it) {
+//                    is Resource.Success -> {
+//                        binding.genreText.visibility = View.VISIBLE
+//                        genresAdapter.submitGenres(it.data!!)
+//                        binding.shimmerLayoutGenre.visibility = View.GONE
+//                    }
+//
+//                    is Resource.Loading -> {
+//                        binding.genreText.visibility = View.GONE
+//                        binding.shimmerLayoutGenre.visibility = View.VISIBLE
+//                    }
+//
+//                    is Resource.Error -> {
+//                        binding.genreText.visibility = View.GONE
+//                        binding.shimmerLayoutGenre.visibility = View.GONE
+//                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
+//                            .show()
+//                    }
+//                }
+//            }
+//        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -212,22 +259,56 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         binding.apply {
             recyclerViewQuote.setHasFixedSize(true)
             recyclerViewQuote.adapter = quotesAdapter
+//            recyclerViewQuote.adapter = quotesAdapter1
         }
     }
 
+    override fun onAttach(context: Context) {
+        Log.d("TAGG", "onAttach: Created")
+        super.onAttach(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("TAGG", "onCreate: Created")
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onStart() {
+        Log.d("TAGG", "onStart: Created")
+        super.onStart()
+    }
+
     override fun onResume() {
+        Log.d("TAGG", "onResume: Created")
         binding.shimmerLayoutQuotes.startShimmer()
         super.onResume()
     }
 
     override fun onPause() {
+        Log.d("TAGG", "onPause: Created")
         binding.shimmerLayoutQuotes.stopShimmer()
         super.onPause()
     }
 
+    override fun onStop() {
+        Log.d("TAGG", "onStop: Created")
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        Log.d("TAGG", "onViewDestroy: Created")
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
+        Log.d("TAGG", "onDestroy: Created")
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onDetach() {
+        Log.d("TAGG", "onDetach: Created")
+        super.onDetach()
     }
 
 
