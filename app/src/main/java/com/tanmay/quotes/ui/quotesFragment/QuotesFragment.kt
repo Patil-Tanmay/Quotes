@@ -11,7 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
@@ -75,30 +74,27 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
             },
-            onRootClick = {
-
+            onRootClick = { quoteText, v ->
                 bottomNav.visibility = View.GONE
                 val detailedQuotesFragment = DetailedQuotesFragment()
                 val quote = Bundle()
-                quote.putString("QuoteText", it)
+                quote.putString("QuoteText", quoteText)
                 detailedQuotesFragment.arguments = quote
 
                 parentFragmentManager.beginTransaction()
+                    .addSharedElement(binding.recyclerViewQuote, "detail_quote")
                     .add(R.id.fragment_container, detailedQuotesFragment).addToBackStack("Quotes")
                     .commit()
             })
 
         quotesAdapter1 = QuotesAdapter1(
             onBookMarkClick = { fetchedQuotes ->
-
             },
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
             },
             onRootClick = {
-
                 bottomNav.visibility = View.GONE
-
                 parentFragmentManager.beginTransaction()
                     .add(R.id.fragment_container, DetailedQuotesFragment()).addToBackStack("Quotes")
                     .commit()
@@ -140,21 +136,6 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                 }//end of launch
             } // end of repeatOnLifeCycle
         }//outer Launch
-
-        binding.recyclerViewQuote.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-//                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_IDLE) {
-                if (!recyclerView.canScrollVertically(-1)) {
-//                    viewModel.getQuotesPagination()
-                }
-//                }
-            }
-        })
 
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            viewModel.quotesGenres.collect {

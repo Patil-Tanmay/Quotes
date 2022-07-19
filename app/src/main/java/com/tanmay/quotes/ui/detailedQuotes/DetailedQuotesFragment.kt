@@ -1,19 +1,18 @@
 package com.tanmay.quotes.ui.detailedQuotes
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.transition.TransitionInflater
 import com.tanmay.quotes.BuildConfig
 import com.tanmay.quotes.R
 import com.tanmay.quotes.databinding.DetailQuotesBinding
@@ -29,9 +28,16 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
     private val viewModel by activityViewModels<DetailedQuotesViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DetailQuotesBinding.bind(view)
+
+        sharedElementEnterTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(R.transition.shared_quote_transition)
 
         val args = this.arguments
         binding.quoteText.text = args?.getString("QuoteText")
@@ -90,8 +96,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         try {
             val cachePath = File(requireContext().cacheDir, "images")
             cachePath.mkdirs() // making the directory
-            val stream =
-                FileOutputStream("$cachePath/image.png") // overwrites this image every time
+            val stream = FileOutputStream("$cachePath/image.png") // overwrites this image every time
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.close()
         } catch (e: Exception) {
@@ -114,23 +119,22 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
         val chooser = Intent.createChooser(shareIntent, "Choose an app")
-        val resInfoList =
-            requireActivity().packageManager.queryIntentActivities(
-                chooser,
-                PackageManager.MATCH_DEFAULT_ONLY
-            )
-
-        for (resolveInfo in resInfoList) {
-            val packageName = resolveInfo.activityInfo.packageName
-            requireActivity().grantUriPermission(
-                packageName,
-                Uri.parse(contentUri.toString()),
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        }
+//        val resInfoList =
+//            requireActivity().packageManager.queryIntentActivities(
+//                chooser,
+//                PackageManager.MATCH_DEFAULT_ONLY
+//            )
+//
+//        for (resolveInfo in resInfoList) {
+//            val packageName = resolveInfo.activityInfo.packageName
+//            requireActivity().grantUriPermission(
+//                packageName,
+//                Uri.parse(contentUri.toString()),
+//                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+//            )
+//        }
         shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(contentUri.toString()))
-
-        shareIntent.type = "image/jpeg"
+        shareIntent.type = "image/"
         startActivity(chooser, null)
     }
 

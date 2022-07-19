@@ -28,20 +28,11 @@ class ShareQuoteBottomSheetFragment: BottomSheetDialogFragment() {
         _binding = FragmentShareQuoteBinding.inflate(layoutInflater)
         return  binding.root
     }
-
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-//        dialog.setOnShowListener { setupBottomSheet(it) }
-//        return dialog
-//    }
 //
-//    private fun setupBottomSheet(dialogInterface: DialogInterface) {
-//        val bottomSheetDialog = dialogInterface as BottomSheetDialog
-//        val bottomSheet = bottomSheetDialog.findViewById<View>(
-//            com.google.android.material.R.id.design_bottom_sheet)
-//            ?: return
-//        bottomSheet.setBackgroundColor(Color.TRANSPARENT)
-//    }
+    override fun getTheme(): Int {
+        return R.style.BottomSheetDialogTheme
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

@@ -8,6 +8,7 @@
     android:layout_margin="12dp"
     android:clickable="true"
     android:focusable="true"
+    android:transitionName="item_quote"
     app:cardBackgroundColor="#1d2d3c"
     app:cardCornerRadius="25dp"
     app:cardElevation="300dp">

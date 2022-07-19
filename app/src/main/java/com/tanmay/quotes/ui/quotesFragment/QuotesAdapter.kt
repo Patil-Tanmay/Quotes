@@ -1,6 +1,7 @@
 package com.tanmay.quotes.ui.quotesFragment
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedListAdapter
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 class QuotesAdapter(
     val onBookMarkClick: (FetchedQuotesData) -> Unit,
     val onCopyClick : (String) -> Unit,
-    val onRootClick : (String) -> Unit
+    val onRootClick : (String, View) -> Unit
 ) : PagedListAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
@@ -72,7 +73,7 @@ class QuotesAdapter(
                 }
 
                 binding.root.setOnClickListener {
-                    onRootClick(data.quoteText)
+                    onRootClick(data.quoteText, it)
                 }
 
                 copyText.setOnClickListener {
