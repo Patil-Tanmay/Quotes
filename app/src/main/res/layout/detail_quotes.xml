@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
         android:src="@drawable/ic_favourite_quote_empty"
+        android:visibility="visible"
         android:layout_gravity="end"
         android:layout_margin="10dp"/>
 

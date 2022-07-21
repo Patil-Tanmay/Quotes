@@ -6,7 +6,9 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -15,7 +17,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.transition.TransitionInflater
 import com.tanmay.quotes.BuildConfig
 import com.tanmay.quotes.R
+import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.databinding.DetailQuotesBinding
+import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.launch
 import java.io.File
@@ -28,6 +32,10 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
     private val viewModel by activityViewModels<DetailedQuotesViewModel>()
 
+    private val qViewModel by activityViewModels<QuotesFragmentViewModel>()
+
+    private var args : FetchedQuotesData?= null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -39,10 +47,29 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         sharedElementEnterTransition = TransitionInflater.from(requireContext())
             .inflateTransition(R.transition.shared_quote_transition)
 
-        val args = this.arguments
-        binding.quoteText.text = args?.getString("QuoteText")
+        args = this.arguments?.getParcelable<FetchedQuotesData>("FetchedQuotesData")
+        binding.quoteText.text = args?.quoteText
 
-//        binding.imgLayout.drawToBitmap()
+        setUpObservables()
+        setUpOnClickListeners()
+    }
+
+    private fun setUpOnClickListeners(){
+        binding.icFavourite.setImageResource(
+            if (args?.isBookmarked == true) {
+                R.drawable.ic_favourite_quote_filled
+            } else {
+                R.drawable.ic_favourite_quote_empty
+            }
+        )
+
+        binding.icFavourite.setOnClickListener {
+            if (binding.icFavourite.drawable.constantState == ResourcesCompat.getDrawable(resources,R.drawable.ic_favourite_quote_filled, null)?.constantState){
+                binding.icFavourite.setImageResource(R.drawable.ic_favourite_quote_empty)
+            }else{
+                binding.icFavourite.setImageResource(R.drawable.ic_favourite_quote_filled)
+            }
+        }
 
         //setting up the bottomsheet
         binding.icShare.setOnClickListener {
@@ -51,7 +78,9 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
                 "BottomSheetFrag"
             )
         }
+    }
 
+    private fun setUpObservables() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -76,7 +105,6 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
                 }
             }
         }
-
     }
 
     private fun createImageFromView(v: View) {
@@ -96,7 +124,8 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         try {
             val cachePath = File(requireContext().cacheDir, "images")
             cachePath.mkdirs() // making the directory
-            val stream = FileOutputStream("$cachePath/image.png") // overwrites this image every time
+            val stream =
+                FileOutputStream("$cachePath/image.png") // overwrites this image every time
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.close()
         } catch (e: Exception) {

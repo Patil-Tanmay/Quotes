@@ -8,6 +8,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tanmay.quotes.R
+import com.tanmay.quotes.api.Data
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.databinding.ItemQuoteBinding
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 class QuotesAdapter(
     val onBookMarkClick: (FetchedQuotesData) -> Unit,
     val onCopyClick : (String) -> Unit,
-    val onRootClick : (String, View) -> Unit
+    val onRootClick : (FetchedQuotesData, View) -> Unit
 ) : PagedListAdapter<FetchedQuotesData, QuotesAdapter.QuotesViewHolder>(QUOTE_COMPARATOR) {
 
 
@@ -73,7 +74,7 @@ class QuotesAdapter(
                 }
 
                 binding.root.setOnClickListener {
-                    onRootClick(data.quoteText, it)
+                    onRootClick(data, it)
                 }
 
                 copyText.setOnClickListener {

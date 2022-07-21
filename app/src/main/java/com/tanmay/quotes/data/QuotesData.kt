@@ -1,7 +1,9 @@
 package com.tanmay.quotes.data
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
 
 @Entity(
@@ -33,6 +35,7 @@ fun QuotesData.toFetchedQuotes() : FetchedQuotesData{
 @Entity(
     tableName = "fetched_quotes"
 )
+@Parcelize
 data class FetchedQuotesData(
 
     @PrimaryKey(autoGenerate = true)
@@ -42,4 +45,4 @@ data class FetchedQuotesData(
     val quoteGenre: String,
     val quoteText: String,
     var isBookmarked: Boolean?=null
-)
+): Parcelable

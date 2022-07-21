@@ -74,11 +74,12 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
             },
-            onRootClick = { quoteText, v ->
+            onRootClick = { fetchedQuotesData, v ->
                 bottomNav.visibility = View.GONE
                 val detailedQuotesFragment = DetailedQuotesFragment()
                 val quote = Bundle()
-                quote.putString("QuoteText", quoteText)
+//                quote.putString("QuoteText", fetchedQuotesData.quoteText)
+                quote.putParcelable("FetchedQuotesData", fetchedQuotesData)
                 detailedQuotesFragment.arguments = quote
 
                 parentFragmentManager.beginTransaction()
