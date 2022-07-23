@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -17,6 +18,7 @@ import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
 import com.tanmay.quotes.utils.NetworkState
+import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -54,7 +56,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         genresAdapter = GenreAdapter() { genreName, position ->
             //make api call to change list of quotes according to given Genre
 //            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-//            viewModel.updateGenreStatus(genreName, position)
+            viewModel.updateGenreStatus(genreName, position)
             quotesListing.onRefresh(genreName, false)
             binding.genreText.text = genreName
         }
@@ -112,6 +114,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             quotesAdapter.submitList(it)
         }
 
+//        failed atttempt of manual pagination
 //        viewLifecycleOwner.lifecycleScope.launch {
 //                viewModel.quotesListFlow.collect{
 //                    if (it is Resource.Success) {
@@ -138,29 +141,31 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             } // end of repeatOnLifeCycle
         }//outer Launch
 
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewModel.quotesGenres.collect {
-//                when (it) {
-//                    is Resource.Success -> {
-//                        binding.genreText.visibility = View.VISIBLE
-//                        genresAdapter.submitGenres(it.data!!)
-//                        binding.shimmerLayoutGenre.visibility = View.GONE
-//                    }
-//
-//                    is Resource.Loading -> {
-//                        binding.genreText.visibility = View.GONE
-//                        binding.shimmerLayoutGenre.visibility = View.VISIBLE
-//                    }
-//
-//                    is Resource.Error -> {
-//                        binding.genreText.visibility = View.GONE
-//                        binding.shimmerLayoutGenre.visibility = View.GONE
-//                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
-//                            .show()
-//                    }
-//                }
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.quotesGenres.collect {
+                when (it) {
+                    is Resource.Success -> {
+                        binding.genreText.visibility = View.VISIBLE
+                        genresAdapter.submitGenres(it.data!!)
+                        binding.shimmerLayoutGenre.visibility = View.GONE
+                    }
+
+                    is Resource.Loading -> {
+                        binding.genreText.visibility = View.GONE
+                        binding.genreRec.visibility = View.GONE
+                        binding.shimmerLayoutGenre.visibility = View.VISIBLE
+                    }
+
+                    is Resource.Error -> {
+                        binding.genreText.visibility = View.GONE
+                        binding.genreRec.visibility = View.GONE
+                        binding.shimmerLayoutGenre.visibility = View.GONE
+                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

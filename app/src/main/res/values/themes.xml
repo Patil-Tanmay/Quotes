@@ -32,6 +32,7 @@
     </style>
 
 
+    <!-- For Future Ref If we want to add corners in bottomsheet    -->
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bg_round_drawable</item>
     </style>

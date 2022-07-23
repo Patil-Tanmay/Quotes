@@ -28,10 +28,10 @@ class ShareQuoteBottomSheetFragment: BottomSheetDialogFragment() {
         _binding = FragmentShareQuoteBinding.inflate(layoutInflater)
         return  binding.root
     }
-//
-    override fun getTheme(): Int {
-        return R.style.BottomSheetDialogTheme
-    }
+
+//    override fun getTheme(): Int {
+//        return R.style.BottomSheetDialogTheme
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
