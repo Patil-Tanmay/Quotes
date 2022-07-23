@@ -12,7 +12,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tanmay.quotes.R
 import com.tanmay.quotes.databinding.FragmentShareQuoteBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ShareQuoteBottomSheetFragment: BottomSheetDialogFragment() {
 
     private var _binding : FragmentShareQuoteBinding?=null

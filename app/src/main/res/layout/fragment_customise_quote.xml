@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:backgroundTint="@color/black"
-    android:transitionName="detail_quote">
+    android:background="@color/black">
 
     <LinearLayout
         android:id="@+id/imgLayout"
@@ -34,6 +32,21 @@
             android:textStyle="bold"
             tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/quote_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:fontFamily="serif-monospace"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:visibility="gone"
+            android:textAllCaps="false"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
+
+
         <ImageView
             android:id="@+id/quoteE"
             android:layout_width="wrap_content"
@@ -54,72 +67,45 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/ic_share"
+            android:id="@+id/change_background"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_share" />
+            android:src="@drawable/ic_background" />
+
+        <ImageButton
+            android:id="@+id/change_quote_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:layout_weight="0.6"
+            android:background="@color/black"
+            android:src="@drawable/ic_change_quote_color" />
+
+    </LinearLayout>
 
         <ImageButton
             android:id="@+id/ic_save_to_Gallery"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:backgroundTint="@color/black"
             android:clickable="true"
             android:focusable="true"
+            android:layout_margin="1dp"
+            android:layout_gravity="end"
             android:src="@drawable/ic_file_download" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:gravity="end">
-
-        <ImageButton
-            android:id="@+id/ic_favourite_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/black"
-            android:src="@drawable/ic_favourite_quote_empty"
-            android:visibility="visible" />
-
-        <ImageButton
-            android:id="@+id/customise_quote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:background="@color/black"
-            android:src="@drawable/ic_customise" />
-
-
-        <ImageButton
-            android:id="@+id/ic_favourite_filled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/black"
-            android:src="@drawable/ic_favourite_quote_filled"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
     <ImageButton
-        android:id="@+id/ic_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:src="@drawable/ic_arrow_right"
         android:background="@color/black"
+        android:id="@+id/back_button"
         android:rotation="180"
-        android:src="@drawable/ic_arrow_right" />
-
+        android:layout_margin="12dp"/>
 
 </FrameLayout>

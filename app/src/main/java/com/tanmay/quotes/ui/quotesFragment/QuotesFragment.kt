@@ -132,7 +132,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                             val listOfPagedQuotes = quotesAdapter.currentList?.map { it.quoteText }
                             if (listOfPagedQuotes?.contains(quote.quoteText) == true) {
                                 val index = listOfPagedQuotes.indexOf(quote.quoteText)
-                                quotesAdapter.currentList?.get(index)?.isBookmarked = false
+                                quotesAdapter.currentList?.get(index)?.isBookmarked = quote.isBookmarked
                                 quotesAdapter.notifyItemChanged(index)
                             }
                         }

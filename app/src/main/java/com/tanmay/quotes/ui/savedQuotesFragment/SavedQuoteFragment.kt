@@ -57,7 +57,7 @@ class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
                 viewModel.deleteQuote(quote)
 //                qViewModel.updatePagedList(quote.toFetchedQuotes())
 //                qViewModel.isBookmarked(quote,quote.toFetchedQuotes())
-                qViewModel.updateQuotesState(quote.toFetchedQuotes())
+                qViewModel.updateQuotesState(quote.toFetchedQuotes().copy(isBookmarked = false))
             },
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
