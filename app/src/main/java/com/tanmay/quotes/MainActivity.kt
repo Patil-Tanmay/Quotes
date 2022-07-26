@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-//    private val TAG = "MainActivity1"
+//    private val TAG = "MainActivity"
 
     private lateinit var navController: NavController
 
