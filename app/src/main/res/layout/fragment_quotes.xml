@@ -1,124 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tanmay.quotes.utils.CustomSwipeToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipeRefreshLayout"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.quotesFragment.QuotesFragment">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        android:orientation="vertical">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryColor"
-            android:backgroundTint="@color/primaryColor"
-            app:title="Quotes"
-            app:titleTextColor="@color/white"
-            app:titleMargin="8dp"/>
-
-        <!--  Genre Rec    -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerLayoutGenre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <include layout="@layout/item_genre_shimmer" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/genreRec"
+            <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
-                tools:listitem="@layout/genre_chip" />
+                android:background="@color/primaryColor"
+                android:backgroundTint="@color/primaryColor"
+                app:title="Quotes"
+                app:titleMargin="8dp"
+                app:titleTextColor="@color/white" />
 
-            <TextView
-                android:id="@+id/genreText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginHorizontal="10dp"
-                android:text="All"
-                android:textSize="18sp"
-                android:visibility="visible" />
-
-        </LinearLayout>
-
-         <!-- Quotes Rec -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:orientation="vertical">
-
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmerLayoutQuotes"
+            <!--  Genre Rec    -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerLayoutGenre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <include layout="@layout/item_genre_shimmer" />
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/genreRec"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:visibility="visible"
+                    tools:listitem="@layout/genre_chip" />
 
-                    <include layout="@layout/item_quote_shimmer" />
+                <TextView
+                    android:id="@+id/genreText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="8dp"
+                    android:text="All"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
 
-                    <include layout="@layout/item_quote_shimmer" />
+            </LinearLayout>
 
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                    <include layout="@layout/item_quote_shimmer" />
-
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewQuote"
+            <!-- Quotes Rec -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:transitionName="recyclerView_quote"
-                android:visibility="visible"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_quote" />
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_height="match_parent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmerLayoutQuotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                        <include layout="@layout/item_quote_shimmer" />
+
+                    </LinearLayout>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewQuote"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:transitionName="recyclerView_quote"
+                    android:visibility="visible"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_quote" />
+
+            </LinearLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
-    </LinearLayout>
 
 
-      <!--   Error Rec  -->
+        <!--   Error Rec  -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txt_view_error"
@@ -139,7 +142,4 @@
 
         </LinearLayout>
 
-    </FrameLayout>
-
-
-</com.tanmay.quotes.utils.CustomSwipeToRefreshLayout>
+</FrameLayout>

@@ -31,7 +31,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     private val viewModel: QuotesFragmentViewModel by activityViewModels()
 
     private lateinit var quotesAdapter: QuotesAdapter
-    private lateinit var quotesAdapter1: QuotesAdapter1
+//    private lateinit var quotesAdapter1: QuotesAdapter1
 
     private lateinit var genresAdapter: GenreAdapter
 
@@ -40,10 +40,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentQuotesBinding.bind(view)
-
-        viewModel.getQuotesGenres()
-
         val quotesListing = viewModel.getQuotes()
+        viewModel.getQuotesGenres()
 
 //        viewModel.getQuotesPagination()
 
@@ -85,21 +83,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                 detailedQuotesFragment.arguments = quote
 
                 parentFragmentManager.beginTransaction()
-                    .addSharedElement(binding.recyclerViewQuote, "detail_quote")
                     .add(R.id.fragment_container, detailedQuotesFragment).addToBackStack("Quotes")
-                    .commit()
-            })
-
-        quotesAdapter1 = QuotesAdapter1(
-            onBookMarkClick = { fetchedQuotes ->
-            },
-            onCopyClick = { quoteText ->
-                viewModel.copyQuote(quoteText)
-            },
-            onRootClick = {
-                bottomNav.visibility = View.GONE
-                parentFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, DetailedQuotesFragment()).addToBackStack("Quotes")
                     .commit()
             })
 
@@ -110,8 +94,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             quotesListing.onRefresh.invoke(null, true)
         }
 
-        quotesListing.articles.observe(viewLifecycleOwner) {
-            quotesAdapter.submitList(it)
+        quotesListing.articles.observeForever {
+                quotesAdapter.submitList(it)
         }
 
 //        failed atttempt of manual pagination
@@ -145,12 +129,14 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
             viewModel.quotesGenres.collect {
                 when (it) {
                     is Resource.Success -> {
+                        binding.genreRec.visibility = View.VISIBLE
                         binding.genreText.visibility = View.VISIBLE
                         genresAdapter.submitGenres(it.data!!)
                         binding.shimmerLayoutGenre.visibility = View.GONE
                     }
 
                     is Resource.Loading -> {
+                        binding.genreRec.visibility = View.GONE
                         binding.genreText.visibility = View.GONE
                         binding.genreRec.visibility = View.GONE
                         binding.shimmerLayoutGenre.visibility = View.VISIBLE
@@ -173,17 +159,17 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                     quotesListing.refreshState.collect {
                         when (it) {
                             NetworkState.LOADING -> {
-                                if (binding.recyclerViewQuote.canScrollVertically(1)) {
+                                binding.shimmerLayoutQuotes.visibility = View.VISIBLE
+                                binding.recyclerViewQuote.visibility = View.GONE
+                                binding.genreRec.visibility = View.GONE
+                                binding.btnRetry.visibility = View.GONE
+                            }
+
+                            NetworkState.LOADING_NEXT_PAGE ->{
                                     binding.shimmerLayoutQuotes.visibility = View.GONE
                                     binding.recyclerViewQuote.visibility = View.VISIBLE
                                     binding.genreRec.visibility = View.VISIBLE
                                     binding.btnRetry.visibility = View.GONE
-                                } else {
-                                    binding.shimmerLayoutQuotes.visibility = View.VISIBLE
-                                    binding.recyclerViewQuote.visibility = View.GONE
-                                    binding.genreRec.visibility = View.GONE
-                                    binding.btnRetry.visibility = View.GONE
-                                }
                             }
 
                             NetworkState.IDLE -> {
@@ -244,7 +230,6 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 
     private fun setUpQuotesAdapter() {
         binding.apply {
-            recyclerViewQuote.setHasFixedSize(true)
             recyclerViewQuote.adapter = quotesAdapter
 //            recyclerViewQuote.adapter = quotesAdapter1
         }

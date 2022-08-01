@@ -1,13 +1,19 @@
 package com.tanmay.quotes.ui.detailedQuotes
 
+import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
@@ -30,6 +36,7 @@ import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 
 @AndroidEntryPoint
 class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
@@ -41,7 +48,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
     private val qViewModel by activityViewModels<QuotesFragmentViewModel>()
 
-    private var args : FetchedQuotesData?= null
+    private var args: FetchedQuotesData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +68,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         setUpOnClickListeners()
     }
 
-    private fun setUpOnClickListeners(){
+    private fun setUpOnClickListeners() {
         binding.icFavouriteEmpty.setImageResource(
             if (args?.isBookmarked == true) {
                 R.drawable.ic_favourite_quote_filled
@@ -71,7 +78,12 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         )
 
         binding.icFavouriteEmpty.setOnClickListener {
-            if (binding.icFavouriteEmpty.drawable.constantState == ResourcesCompat.getDrawable(resources,R.drawable.ic_favourite_quote_filled, null)?.constantState){
+            if (binding.icFavouriteEmpty.drawable.constantState == ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_favourite_quote_filled,
+                    null
+                )?.constantState
+            ) {
                 binding.icFavouriteEmpty.setImageResource(R.drawable.ic_favourite_quote_empty)
                 val qData = QuotesData(
                     id = args?.id,
@@ -84,7 +96,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
                 qViewModel.isBookmarked(qData, args!!)
                 qViewModel.updateQuotesState(args?.copy(isBookmarked = false)!!)
 
-            }else{
+            } else {
                 binding.icFavouriteEmpty.setImageResource(R.drawable.ic_favourite_quote_filled)
                 val qData = QuotesData(
                     id = args?.id,
@@ -114,7 +126,8 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
         //moving on to customise Fragment
         binding.customiseQuote.setOnClickListener {
-            childFragmentManager.beginTransaction().add(CustomiseQuotesFragment(),"CustomiseFrag").commit()
+            childFragmentManager.beginTransaction().add(CustomiseQuotesFragment(), "CustomiseFrag")
+                .commit()
         }
 
         //onBackStateListener
@@ -159,10 +172,15 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         val c = Canvas(bitmap)
         v.layout(v.left, v.top, v.right, v.bottom)
         v.draw(c)
-        when(actionType){
-            ActionType.GALLERY -> { saveToGallery(bitmap)}
+        when (actionType) {
+            ActionType.GALLERY -> {
+//                saveToGallery(bitmap)
+                saveMediaToStorage(bitmap)
+            }
 
-            ActionType.SHARE -> {shareImage(bitmap)}
+            ActionType.SHARE -> {
+                shareImage(bitmap)
+            }
         }
     }
 
@@ -190,20 +208,103 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         createSharableIntent(contentUri)
     }
 
-    private fun saveToGallery(bitmap: Bitmap){
+    private fun saveToGallery(bitmap: Bitmap) {
         try {
+            val imagesDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val downloadPath = Environment.DIRECTORY_PICTURES
             val stream =
-                FileOutputStream("$downloadPath/${args?._id}.png")
+                FileOutputStream("/storage/emulated/0/Pictures/${args?._id}.png")
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.close()
-            Toasty.success(requireContext(), "Saved Image Successfully !", Snackbar.LENGTH_SHORT).show()
+            Toasty.success(requireContext(), "$imagesDir Saved Image Successfully !", Snackbar.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toasty.error(requireContext(), "Failed to generate Image.", Toasty.LENGTH_SHORT, true)
                 .show()
             e.printStackTrace()
         }
     }
+
+    fun saveMediaToStorage(bitmap: Bitmap) {
+
+        //Generating a file name
+        val filename = "${args?._id}.jpg"
+
+        //Output stream
+        var fos: OutputStream? = null
+
+        fun askForPermission() {
+            val storagePermission = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+                || ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+            ) {
+                requestForPermission.launch(storagePermission)
+            } else {
+                val imagesDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val image = File(imagesDir, filename)
+                fos = FileOutputStream(image)
+                fos?.use {
+                    //Finally writing the bitmap to the output stream that we opened
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                }
+                Toasty.success(requireContext(), " Saved Image Successfully to $imagesDir!", Snackbar.LENGTH_SHORT).show()
+            }
+        }
+
+        //For devices running android >= Q
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //getting the contentResolver
+            context?.contentResolver?.also { resolver ->
+
+                //Content resolver will process the contentvalues
+                val contentValues = ContentValues().apply {
+
+                    //putting file information in content values
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+
+                //Inserting the contentValues to contentResolver and getting the Uri
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                //Opening an outputstream with the Uri that we got
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+            }
+            fos?.use {
+                //Finally writing the bitmap to the output stream that we opened
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            }
+            Toasty.success(requireContext(), "Saved Image Successfully to /storage/emulated/0/Pictures!", Snackbar.LENGTH_SHORT).show()
+        } else {
+            //These for devices running on android < Q
+            //So I don't think an explanation is needed here
+            askForPermission()
+        }
+
+    }
+
+    private val requestForPermission =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            val granted = it.entries.all { entries ->
+                entries.value == true
+            }
+            if (granted) {
+                Toasty.success(requireContext(), "Permission Granted!", Snackbar.LENGTH_SHORT).show()
+            } else {
+                Toasty.info(
+                    requireContext(),
+                    "Please Allow the Permission to save the images.",
+                    Toasty.LENGTH_SHORT
+                ).show()
+            }
+        }
+
 
     private fun createSharableIntent(contentUri: Uri) {
         val shareIntent = Intent()
@@ -237,7 +338,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
     }
 }
 
-enum class ActionType{
+enum class ActionType {
     GALLERY,
     SHARE
 }

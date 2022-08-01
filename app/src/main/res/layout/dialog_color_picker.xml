@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="center_vertical"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.tanmay.quotes.colorPicker.ColorPickerView
+            android:id="@+id/colorPickerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="30dp"/>
+
+       <TextView
+           android:id="@+id/electedCOlor"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           tools:text="Sample Color Testy"
+           android:layout_gravity="center_horizontal"
+           android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

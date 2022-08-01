@@ -28,7 +28,6 @@ class QuotesDataSource(
         scope.launch {
             initLoadState.emit(NetworkState.LOADING)
             try {
-//                if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()) {
                     val quotes = if (category == "All") {
                         quotesApi.getQuotes(
                             page = 1,
@@ -64,25 +63,11 @@ class QuotesDataSource(
                             )
                         }
                     }
-                    db.withTransaction {
-                        db.quotesDao().deleteFetchedQuote()
-                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
-                    }
-                val d = db.withTransaction {
-                    db.quotesDao().getAllFetchedQuotes(category)
-                }
                     callback.onResult(fetchedQuotesData, null, 2)
                     initLoadState.emit(NetworkState.IDLE)
-//                }else{
-//                    val fetchedQuotesData = db.quotesDao().getAllFetchedQuotes(category)
-//                    callback.onResult(fetchedQuotesData, null, 2)
-//                    initLoadState.emit(NetworkState.IDLE)
-//                }
             } catch (e: Exception) {
                 initLoadState.emit(NetworkState.ERROR)
             }
-//            }
-
         }
     }
 
@@ -100,10 +85,9 @@ class QuotesDataSource(
         callback: LoadCallback<Int, FetchedQuotesData>
     ) {
         scope.launch {
-            if (loadMoreState.value == NetworkState.LOADING) return@launch
-            initLoadState.emit(NetworkState.LOADING)
+            if (loadMoreState.value == NetworkState.LOADING_NEXT_PAGE) return@launch
+            initLoadState.emit(NetworkState.LOADING_NEXT_PAGE)
             try {
-//                if(db.quotesDao().getAllFetchedQuotes(category).isNullOrEmpty()) {
                     val quotes = if (category == "All") {
                         quotesApi.getQuotes(
                             page = params.key,
@@ -137,10 +121,6 @@ class QuotesDataSource(
                                 quoteText = qData.quoteText
                             )
                         }
-                    }
-                    db.withTransaction {
-                        db.quotesDao().deleteFetchedQuote()
-                        db.quotesDao().insertFetchedQuote(fetchedQuotesData)
                     }
                     val nextPageKey = quotes.pagination.nextPage
                     callback.onResult(fetchedQuotesData, nextPageKey)

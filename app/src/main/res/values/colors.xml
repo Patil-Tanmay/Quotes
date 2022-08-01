@@ -14,4 +14,21 @@
     <color name="colorBackGround">#15202B</color>
 
 
+    <color name="color1">#f44236</color>
+    <color name="color2">#ea1e63</color>
+    <color name="color3">#9a28b1</color>
+    <color name="color4">#683ab7</color>
+    <color name="color5">#2F4FE3</color>
+    <color name="color6">#2295f0</color>
+    <color name="color7">#04a8f5</color>
+    <color name="color8">#00bed2</color>
+    <color name="color9">#009788</color>
+    <color name="color10">#4cb050</color>
+    <color name="color11">#ff9700</color>
+    <color name="color12">#FFC000</color>
+    <color name="color13">#D2E41D</color>
+    <color name="color14">#fe5722</color>
+    <color name="color15">#795547</color>
+
+
 </resources>
