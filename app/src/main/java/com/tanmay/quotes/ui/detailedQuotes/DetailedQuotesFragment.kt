@@ -50,10 +50,6 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
     private var args: FetchedQuotesData? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DetailQuotesBinding.bind(view)
@@ -126,7 +122,11 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
 
         //moving on to customise Fragment
         binding.customiseQuote.setOnClickListener {
-            childFragmentManager.beginTransaction().add(CustomiseQuotesFragment(), "CustomiseFrag")
+            val customiseQuoteFrag = CustomiseQuotesFragment()
+            val quoteText = Bundle()
+            quoteText.putString(QUOTETEXT,args?.quoteText)
+            customiseQuoteFrag.arguments = quoteText
+            parentFragmentManager.beginTransaction().add(R.id.fragment_container,customiseQuoteFrag, "CustomiseFrag").addToBackStack(null)
                 .commit()
         }
 
@@ -225,7 +225,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         }
     }
 
-    fun saveMediaToStorage(bitmap: Bitmap) {
+    private fun saveMediaToStorage(bitmap: Bitmap) {
 
         //Generating a file name
         val filename = "${args?._id}.jpg"
@@ -233,6 +233,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         //Output stream
         var fos: OutputStream? = null
 
+        //inline Functions
         fun askForPermission() {
             val storagePermission = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -335,6 +336,11 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object{
+        const val DETAILQUOTESFGRAG = "DetaileQuotesFragment"
+        const val QUOTETEXT = "QuoteText"
     }
 }
 

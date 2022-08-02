@@ -17,6 +17,7 @@ import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
+import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment.Companion.DETAILQUOTESFGRAG
 import com.tanmay.quotes.utils.NetworkState
 import com.tanmay.quotes.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,9 +82,9 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 //                quote.putString("QuoteText", fetchedQuotesData.quoteText)
                 quote.putParcelable("FetchedQuotesData", fetchedQuotesData)
                 detailedQuotesFragment.arguments = quote
-
+                parentFragmentManager.findFragmentByTag("Quotes").
                 parentFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, detailedQuotesFragment).addToBackStack("Quotes")
+                    .add(R.id.fragment_container, detailedQuotesFragment,DETAILQUOTESFGRAG).addToBackStack("Quotes")
                     .commit()
             })
 
