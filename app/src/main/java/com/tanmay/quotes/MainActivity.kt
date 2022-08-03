@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -19,6 +20,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.tanmay.quotes.databinding.ActivityMainBinding
+import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
+import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment.Companion.DETAILQUOTESFRAG
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragment
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuoteFragment
@@ -102,9 +105,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+//        supportFragmentManager.fragmen
+//        Log.e("CheckBackStackEntry", "onBackPressed: ${supportFragmentManager.backStackEntryCount}", )
         if (savedFragment.isVisible){
             binding.bottomNavView.selectedItemId = R.id.quotes
             ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
+        }else if (supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG) is DetailedQuotesFragment || supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG) is DetailedQuotesFragment){
+            binding.bottomNavView.visibility = View.GONE
+            super.onBackPressed()
         }else{
             binding.bottomNavView.visibility = View.VISIBLE
             super.onBackPressed()

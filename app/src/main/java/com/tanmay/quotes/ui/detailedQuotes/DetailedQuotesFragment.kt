@@ -12,7 +12,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -30,6 +32,7 @@ import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.DetailQuotesBinding
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment
+import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment.Companion.CUSTOMISEQUOTEFRAG
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import es.dmoral.toasty.Toasty
@@ -126,7 +129,9 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
             val quoteText = Bundle()
             quoteText.putString(QUOTETEXT,args?.quoteText)
             customiseQuoteFrag.arguments = quoteText
-            parentFragmentManager.beginTransaction().add(R.id.fragment_container,customiseQuoteFrag, "CustomiseFrag").addToBackStack(null)
+            parentFragmentManager.beginTransaction()
+                .hide(this)
+                .add(R.id.fragment_container,customiseQuoteFrag, CUSTOMISEQUOTEFRAG).addToBackStack(DETAILQUOTESFRAG)
                 .commit()
         }
 
@@ -339,7 +344,7 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
     }
 
     companion object{
-        const val DETAILQUOTESFGRAG = "DetaileQuotesFragment"
+        const val DETAILQUOTESFRAG = "DetaileQuotesFragment"
         const val QUOTETEXT = "QuoteText"
     }
 }

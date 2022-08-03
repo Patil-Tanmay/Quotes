@@ -5,11 +5,13 @@
     android:layout_height="wrap_content">
 
     <View
+        android:id="@+id/colorView"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/bg_circle_shape" />
 
     <ImageView
+        android:id="@+id/selectedColor"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_gravity="center"

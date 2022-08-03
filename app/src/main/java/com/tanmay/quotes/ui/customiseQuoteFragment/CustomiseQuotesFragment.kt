@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tanmay.quotes.R
+import com.tanmay.quotes.data.models.ColorPalleteModel
 import com.tanmay.quotes.databinding.BottomsheetColorPickerBinding
 import com.tanmay.quotes.databinding.FragmentCustomiseQuoteBinding
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment.Companion.QUOTETEXT
@@ -24,7 +26,9 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
 
     private lateinit var bottomSheetBinding: BottomsheetColorPickerBinding
 
+    private lateinit var colorAdapter : ColorAdapter
 
+    private var colorList = arrayListOf<ColorPalleteModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,14 +41,24 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpBottomSheetDialog()
 
-        val listOfColors = resources.getStringArray(R.array.default_colors)
+        colorAdapter = ColorAdapter({},{})
+
+        setUpColorList()
+        setUpBottomSheetDialog()
 
         quoteText = arguments?.getString(QUOTETEXT)
 
         binding.quoteText.text = quoteText
         setUpOnClickListeners()
+    }
+
+    private fun setUpColorList(){
+        val colorsTypedArray = resources.obtainTypedArray(R.array.default_colors)
+        for (i in 0 until colorsTypedArray.length()) {
+            colorList.add(ColorPalleteModel(colorsTypedArray.getColor(i, 0), false))
+        }
+        colorsTypedArray.recycle()
     }
 
     private fun setUpBottomSheetDialog(){
@@ -56,7 +70,9 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
     }
 
     private fun setUpBottomSheetRecView(){
-
+        colorAdapter.setColorList(colorList)
+        bottomSheetBinding.recyclerViewColorPallete.layoutManager = GridLayoutManager(context,4, GridLayoutManager.VERTICAL, false)
+        bottomSheetBinding.recyclerViewColorPallete.adapter = colorAdapter
     }
 
     private fun setUpOnClickListeners(){
@@ -65,7 +81,12 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
         }
 
         binding.changeQuoteColor.setOnClickListener {
+            colorAdapter.setType(ColorSelectedType.Text)
             bottomSheetDialog.show()
+        }
+
+        binding.backButton.setOnClickListener{
+            requireActivity().onBackPressed()
         }
     }
 
@@ -74,4 +95,13 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
         _binding = null
     }
 
+    companion object{
+        const val CUSTOMISEQUOTEFRAG = "CustomiseFrag"
+    }
+
+}
+
+enum class ColorSelectedType{
+    Background,
+    Text
 }
