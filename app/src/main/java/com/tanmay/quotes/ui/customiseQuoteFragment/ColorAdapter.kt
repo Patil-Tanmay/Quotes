@@ -1,13 +1,10 @@
 package com.tanmay.quotes.ui.customiseQuoteFragment
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.tanmay.quotes.R
 import com.tanmay.quotes.data.models.ColorPalleteModel
 import com.tanmay.quotes.databinding.ItemColorBinding
 
@@ -17,6 +14,8 @@ class ColorAdapter(
 ): RecyclerView.Adapter<ColorAdapter.ColorViewModel>() {
 
     private var colorPalleteModelList = arrayListOf<ColorPalleteModel>()
+
+    private var currentPosition : Int =0
 
     private var type: ColorSelectedType = ColorSelectedType.Text
 
@@ -32,8 +31,12 @@ class ColorAdapter(
         return colorPalleteModelList.size
     }
 
-    fun setColorList(colorList : List<ColorPalleteModel>){
+    fun setColorList(colorList : List<ColorPalleteModel>, position: Int){
+        colorPalleteModelList.clear()
+        this.currentPosition = position
+        colorList[currentPosition].isChecked = true
         colorPalleteModelList.addAll(colorList)
+        notifyDataSetChanged()
     }
 
     fun setType(colorType: ColorSelectedType){
@@ -50,16 +53,34 @@ class ColorAdapter(
 //            ViewCompat.setBackgroundTintList(binding.colorView, ColorStateList.valueOf(item.color))
             binding.colorView.backgroundTintList = ColorStateList.valueOf(item.color)
 
+            if (adapterPosition == currentPosition){
+                binding.selectedColor.visibility = View.VISIBLE
+            }else{
+                binding.selectedColor.visibility = View.GONE
+            }
+
             binding.root.setOnClickListener {
+
+                //inline function
+                fun notifySelectedItem(){
+                    if (colorPalleteModelList.indexOf(item)!=currentPosition){
+                        binding.selectedColor.visibility = View.VISIBLE
+                        colorPalleteModelList[currentPosition].isChecked = false
+                        notifyItemChanged(currentPosition)
+                    }
+                }
+
                 when(type){
                     ColorSelectedType.Text -> {
                         onTextChangeColorClick(item)
-                        binding.selectedColor.visibility = View.VISIBLE
+//                        notifySelectedItem()
+//                        binding.selectedColor.visibility = View.VISIBLE
                     }
 
                     ColorSelectedType.Background -> {
                         onBackGroundChangeColorClick(item)
-                        binding.selectedColor.visibility = View.VISIBLE
+//                        notifySelectedItem()
+//                        binding.selectedColor.visibility = View.VISIBLE
                     }
                 }
             }

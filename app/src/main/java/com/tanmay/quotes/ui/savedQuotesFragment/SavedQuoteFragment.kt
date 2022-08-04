@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.toFetchedQuotes
 import com.tanmay.quotes.databinding.FragmentSavedQuoteBinding
+import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
+import com.tanmay.quotes.ui.quotesFragment.QuotesFragment
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -61,6 +63,18 @@ class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
             },
             onCopyClick = { quoteText ->
                 viewModel.copyQuote(quoteText)
+            },
+            onRootClick = {fetchedQuotesData ->
+                val detailedQuotesFragment = DetailedQuotesFragment()
+                val quote = Bundle()
+                quote.putParcelable("FetchedQuotesData", fetchedQuotesData)
+                detailedQuotesFragment.arguments = quote
+                parentFragmentManager.beginTransaction()
+                    .hide(this)
+                    .add(R.id.fragment_container, detailedQuotesFragment,
+                        DetailedQuotesFragment.DETAILQUOTESFRAG
+                    ).addToBackStack(SAVEDQUOTESFRAG)
+                    .commit()
             }
         )
 
@@ -74,5 +88,9 @@ class SavedQuoteFragment : Fragment(R.layout.fragment_saved_quote) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object{
+        const val SAVEDQUOTESFRAG ="Saved"
     }
 }

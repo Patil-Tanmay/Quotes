@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tanmay.quotes.R
+import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
+import com.tanmay.quotes.data.toFetchedQuotes
 import com.tanmay.quotes.databinding.ItemQuoteBinding
 
 class SavedQuotesAdapter(
     val onBookmarkClick: (QuotesData) -> Unit,
-    val onCopyClick : (String) -> Unit
+    val onCopyClick : (String) -> Unit,
+    val onRootClick : (FetchedQuotesData) -> Unit
 ) : RecyclerView.Adapter<SavedQuotesAdapter.SavedQuotesViewHolder>() {
 
     private val differCallBack = object : DiffUtil.ItemCallback<QuotesData>() {
@@ -91,6 +94,10 @@ class SavedQuotesAdapter(
                     if (position != RecyclerView.NO_POSITION) {
                         onCopyClick(position)
                     }
+                }
+
+                root.setOnClickListener {
+                    onRootClick(quote.toFetchedQuotes())
                 }
             }
         }

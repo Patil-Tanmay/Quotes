@@ -50,8 +50,6 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         binding.shimmerLayoutGenre.visibility = View.GONE
         binding.shimmerLayoutQuotes.visibility = View.GONE
 
-        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-
         genresAdapter = GenreAdapter() { genreName, position ->
             //make api call to change list of quotes according to given Genre
 //            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -76,13 +74,11 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                 viewModel.copyQuote(quoteText)
             },
             onRootClick = { fetchedQuotesData, v ->
-                bottomNav.visibility = View.GONE
                 val detailedQuotesFragment = DetailedQuotesFragment()
                 val quote = Bundle()
 //                quote.putString("QuoteText", fetchedQuotesData.quoteText)
                 quote.putParcelable("FetchedQuotesData", fetchedQuotesData)
                 detailedQuotesFragment.arguments = quote
-                val quotesFrag = parentFragmentManager.findFragmentByTag(QUOTESFRAG)
                 parentFragmentManager.beginTransaction()
                     .hide(this)
                     .add(R.id.fragment_container, detailedQuotesFragment,DETAILQUOTESFRAG).addToBackStack(QUOTESFRAG)

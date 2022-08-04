@@ -23,7 +23,10 @@
             android:id="@+id/quoteIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/ic_quote_icon" />
 
 
@@ -70,9 +73,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/quoteText"
             android:layout_alignParentEnd="true"
-            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:rotation="180"
             android:contentDescription="Nothing"
-            android:src="@drawable/ic_quote_icon_reversed" />
+            android:src="@drawable/ic_quote_icon" />
 
     </RelativeLayout>
 

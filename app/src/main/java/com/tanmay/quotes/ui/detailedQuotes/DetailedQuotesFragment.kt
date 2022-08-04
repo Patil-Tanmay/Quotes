@@ -213,6 +213,8 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         createSharableIntent(contentUri)
     }
 
+
+    // does not backward compatibility that's why not used
     private fun saveToGallery(bitmap: Bitmap) {
         try {
             val imagesDir =

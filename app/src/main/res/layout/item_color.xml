@@ -6,8 +6,8 @@
 
     <View
         android:id="@+id/colorView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:background="@drawable/bg_circle_shape" />
 
     <ImageView

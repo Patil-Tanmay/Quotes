@@ -20,11 +20,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.tanmay.quotes.databinding.ActivityMainBinding
+import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment
+import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment.Companion.CUSTOMISEQUOTEFRAG
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment.Companion.DETAILQUOTESFRAG
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragment
+import com.tanmay.quotes.ui.quotesFragment.QuotesFragment.Companion.QUOTESFRAG
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
 import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuoteFragment
+import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuoteFragment.Companion.SAVEDQUOTESFRAG
 import com.tanmay.quotes.ui.savedQuotesFragment.SavedQuotesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,9 +47,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var ft: FragmentManager
 
-    private lateinit var savedFragment : SavedQuoteFragment
+    private lateinit var savedFragment: SavedQuoteFragment
 
-    private lateinit var quotesFrag : QuotesFragment
+    private lateinit var quotesFrag: QuotesFragment
 
 //    private var isSavedQuotesFrag : Boolean = false
 
@@ -67,24 +71,26 @@ class MainActivity : AppCompatActivity() {
 
 
         ft = supportFragmentManager
-        ft.beginTransaction().add(R.id.fragment_container, quotesFrag, "Quotes").commit()
-        ft.beginTransaction().add(R.id.fragment_container, savedFragment, "Saved")
+        ft.beginTransaction().add(R.id.fragment_container, quotesFrag, QUOTESFRAG).commit()
+        ft.beginTransaction().add(R.id.fragment_container, savedFragment, SAVEDQUOTESFRAG)
             .hide(savedFragment).commit()
 
 
         binding.bottomNavView.setOnItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.quotes -> {
                     ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
                     true
                 }
 
-                R.id.savedQuotes ->{
+                R.id.savedQuotes -> {
                     ft.beginTransaction().hide(quotesFrag).show(savedFragment).commit()
 //                    ft.beginTransaction().show(SavedQuoteFragment()).commit()
                     true
                 }
-                else -> {true}
+                else -> {
+                    true
+                }
             }
         }
 
@@ -102,15 +108,28 @@ class MainActivity : AppCompatActivity() {
             clipboard.setPrimaryClip(clip)
         }
 
+        supportFragmentManager.addFragmentOnAttachListener { fragmentManager, fragment ->
+            if (fragment is DetailedQuotesFragment || fragment is CustomiseQuotesFragment) {
+                binding.bottomNavView.visibility = View.GONE
+            } else {
+                binding.bottomNavView.visibility = View.VISIBLE
+            }
+        }
+
     }
 
     override fun onBackPressed() {
 //        supportFragmentManager.fragmen
 //        Log.e("CheckBackStackEntry", "onBackPressed: ${supportFragmentManager.backStackEntryCount}", )
-        if (savedFragment.isVisible){
+        val d = supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG)
+        val c = supportFragmentManager.findFragmentByTag(CUSTOMISEQUOTEFRAG)
+        if (savedFragment.isVisible) {
             binding.bottomNavView.selectedItemId = R.id.quotes
             ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
-        }else if (supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG) is DetailedQuotesFragment || supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG) is DetailedQuotesFragment){
+        } else if (d?.isVisible == true) {
+            binding.bottomNavView.visibility = View.VISIBLE
+            super.onBackPressed()
+        } else if (c?.isVisible == true){
             binding.bottomNavView.visibility = View.GONE
             super.onBackPressed()
         }else{
