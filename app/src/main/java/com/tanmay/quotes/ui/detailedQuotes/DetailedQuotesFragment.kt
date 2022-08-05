@@ -34,6 +34,7 @@ import com.tanmay.quotes.databinding.DetailQuotesBinding
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment.Companion.CUSTOMISEQUOTEFRAG
 import com.tanmay.quotes.ui.quotesFragment.QuotesFragmentViewModel
+import com.tanmay.quotes.utils.saveMediaToStorage
 import dagger.hilt.android.AndroidEntryPoint
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.launch
@@ -180,7 +181,8 @@ class DetailedQuotesFragment : Fragment(R.layout.detail_quotes) {
         when (actionType) {
             ActionType.GALLERY -> {
 //                saveToGallery(bitmap)
-                saveMediaToStorage(bitmap)
+//                saveMediaToStorage(bitmap)
+                bitmap.saveMediaToStorage(requireContext(),requestForPermission,args?._id!!)
             }
 
             ActionType.SHARE -> {

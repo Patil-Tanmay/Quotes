@@ -32,9 +32,16 @@
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/layout/quotes_load_footer.xml" value="0.14305555555555555" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/menu/bottom_nav_menu.xml" value="0.14662162162162162" />
         <entry key="..\:/StudioProjects/MainGithubProjects/Quotes/app/src/main/res/xml/provider_paths.xml" value="0.16486486486486487" />
+        <entry key="app/src/main/res/drawable/bg_alert_dialog.xml" value="0.1265" />
         <entry key="app/src/main/res/drawable/bg_circle_shape.xml" value="0.126" />
+        <entry key="app/src/main/res/drawable/bg_round_drawable.xml" value="0.1265" />
+        <entry key="app/src/main/res/drawable/ic_background.xml" value="0.1265" />
+        <entry key="app/src/main/res/drawable/ic_customise.xml" value="0.1265" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1265" />
+        <entry key="app/src/main/res/drawable/ic_quote_icon.xml" value="0.1265" />
         <entry key="app/src/main/res/drawable/ic_quote_icon_colored.xml" value="0.126" />
         <entry key="app/src/main/res/drawable/ic_quote_icon_reversed.xml" value="0.126" />
+        <entry key="app/src/main/res/drawable/with_tint_background.xml" value="0.1265" />
         <entry key="app/src/main/res/layout/bottomsheet_color_picker.xml" value="0.21927083333333333" />
         <entry key="app/src/main/res/layout/detail_quotes.xml" value="0.22395833333333334" />
         <entry key="app/src/main/res/layout/fragment_customise_quote.xml" value="0.23333333333333334" />

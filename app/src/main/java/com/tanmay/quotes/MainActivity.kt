@@ -7,11 +7,13 @@ import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -19,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tanmay.quotes.databinding.ActivityMainBinding
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment.Companion.CUSTOMISEQUOTEFRAG
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-//        supportFragmentManager.fragmen
+//        supportFragmentManager.fragment
 //        Log.e("CheckBackStackEntry", "onBackPressed: ${supportFragmentManager.backStackEntryCount}", )
         val d = supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG)
         val c = supportFragmentManager.findFragmentByTag(CUSTOMISEQUOTEFRAG)
@@ -129,10 +132,40 @@ class MainActivity : AppCompatActivity() {
         } else if (d?.isVisible == true) {
             binding.bottomNavView.visibility = View.VISIBLE
             super.onBackPressed()
-        } else if (c?.isVisible == true){
+        } else if (c?.isVisible == true) {
+            MaterialAlertDialogBuilder(this)
+                .setBackground(ResourcesCompat.getDrawable(resources, R.drawable.bg_alert_dialog, null))
+                .setTitle(
+                    Html.fromHtml(
+                        "<font color='#FFFFFF''>Discard Changes</font>",
+                        Html.FROM_HTML_MODE_LEGACY
+                    )
+                )
+                .setMessage(
+                    Html.fromHtml(
+                        "<font color='#FFFFFF'>All the changes will be discarded.\n" +
+                                "Make Sure to save image to the Gallery.</font>",
+                        Html.FROM_HTML_MODE_LEGACY
+                    )
+                )
+                .setPositiveButton(
+                    Html.fromHtml(
+                        "<font color='#FFFFFF'>Yes</font>",
+                        Html.FROM_HTML_MODE_LEGACY
+                    )
+                ) { dialog, which ->
+                    super.onBackPressed()
+                }
+                .setNegativeButton(
+                    Html.fromHtml(
+                        "<font color='#FFFFFF'>No</font>",
+                        Html.FROM_HTML_MODE_LEGACY
+                    )
+                ) { dialog, which ->
+                    dialog.dismiss()
+                }.show()
             binding.bottomNavView.visibility = View.GONE
-            super.onBackPressed()
-        }else{
+        } else {
             binding.bottomNavView.visibility = View.VISIBLE
             super.onBackPressed()
         }

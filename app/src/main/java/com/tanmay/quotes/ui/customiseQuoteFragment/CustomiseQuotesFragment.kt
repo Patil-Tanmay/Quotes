@@ -1,21 +1,27 @@
 package com.tanmay.quotes.ui.customiseQuoteFragment
 
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.models.ColorPalleteModel
 import com.tanmay.quotes.databinding.BottomsheetColorPickerBinding
 import com.tanmay.quotes.databinding.FragmentCustomiseQuoteBinding
 import com.tanmay.quotes.ui.detailedQuotes.DetailedQuotesFragment.Companion.QUOTETEXT
+import com.tanmay.quotes.utils.saveMediaToStorage
 import dagger.hilt.android.AndroidEntryPoint
+import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
@@ -113,12 +119,41 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
         binding.backButton.setOnClickListener {
             requireActivity().onBackPressed()
         }
+
+        binding.icSaveToGallery.setOnClickListener {
+            val v = binding.imgLayout
+            val bitmap = Bitmap.createBitmap(
+                v.measuredWidth,
+                v.measuredHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val c = Canvas(bitmap)
+            v.layout(v.left, v.top, v.right, v.bottom)
+            v.draw(c)
+            bitmap.saveMediaToStorage(requireContext(),requestForPermission, quoteText?.get(0).toString())
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
+    private val requestForPermission =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            val granted = it.entries.all { entries ->
+                entries.value == true
+            }
+            if (granted) {
+                Toasty.success(requireContext(), "Permission Granted!", Snackbar.LENGTH_SHORT).show()
+            } else {
+                Toasty.info(
+                    requireContext(),
+                    "Please Allow the Permission to save the images.",
+                    Toasty.LENGTH_SHORT
+                ).show()
+            }
+        }
 
     companion object {
         const val CUSTOMISEQUOTEFRAG = "CustomiseFrag"
