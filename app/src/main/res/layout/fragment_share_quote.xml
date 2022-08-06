@@ -10,14 +10,34 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/shareAsText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_weight="2"
             android:text="Share As"
             android:textSize="25sp" />
 
+
+            <ImageView
+                android:id="@+id/ic_close"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_close" />
+
+        </LinearLayout>
+
         <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginHorizontal="8dp"
@@ -50,7 +70,7 @@
                 android:textSize="25sp" />
 
             <ImageView
-                android:layout_width="70dp"
+                android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_weight="0.5"
                 android:src="@drawable/ic_arrow_right" />
@@ -84,7 +104,7 @@
                 android:textSize="25sp" />
 
             <ImageView
-                android:layout_width="70dp"
+                android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_weight="0.5"
                 android:src="@drawable/ic_arrow_right" />

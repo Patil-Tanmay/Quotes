@@ -47,6 +47,10 @@ class ShareQuoteBottomSheetFragment: BottomSheetDialogFragment() {
             viewModel.setShareQuoteType(ShareQuoteType.TEXT)
             dismiss()
         }
+
+        binding.icClose.setOnClickListener {
+            dismiss()
+        }
     }
 
 

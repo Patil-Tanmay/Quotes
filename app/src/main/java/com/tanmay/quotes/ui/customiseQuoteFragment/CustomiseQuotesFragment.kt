@@ -93,6 +93,10 @@ class CustomiseQuotesFragment : Fragment(R.layout.fragment_customise_quote) {
         bottomSheetBinding = BottomsheetColorPickerBinding.inflate(layoutInflater)
         bottomSheetDialog.setContentView(bottomSheetBinding.root)
 
+        bottomSheetBinding.icClose.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+
         setUpBottomSheetRecView()
     }
 
