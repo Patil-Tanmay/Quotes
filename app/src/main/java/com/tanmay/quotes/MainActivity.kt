@@ -14,13 +14,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tanmay.quotes.databinding.ActivityMainBinding
 import com.tanmay.quotes.ui.customiseQuoteFragment.CustomiseQuotesFragment
@@ -126,48 +122,53 @@ class MainActivity : AppCompatActivity() {
 //        Log.e("CheckBackStackEntry", "onBackPressed: ${supportFragmentManager.backStackEntryCount}", )
         val d = supportFragmentManager.findFragmentByTag(DETAILQUOTESFRAG)
         val c = supportFragmentManager.findFragmentByTag(CUSTOMISEQUOTEFRAG)
-        if (savedFragment.isVisible) {
-            binding.bottomNavView.selectedItemId = R.id.quotes
-            ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
-        } else if (d?.isVisible == true) {
-            binding.bottomNavView.visibility = View.VISIBLE
-            super.onBackPressed()
-        } else if (c?.isVisible == true) {
-            MaterialAlertDialogBuilder(this)
-                .setBackground(ResourcesCompat.getDrawable(resources, R.drawable.bg_alert_dialog, null))
-                .setTitle(
-                    Html.fromHtml(
-                        "<font color='#FFFFFF''>Discard Changes</font>",
-                        Html.FROM_HTML_MODE_LEGACY
+        when {
+            savedFragment.isVisible -> {
+                binding.bottomNavView.selectedItemId = R.id.quotes
+                ft.beginTransaction().show(quotesFrag).hide(savedFragment).commit()
+            }
+            d?.isVisible == true -> {
+                binding.bottomNavView.visibility = View.VISIBLE
+                super.onBackPressed()
+            }
+            c?.isVisible == true -> {
+                MaterialAlertDialogBuilder(this)
+                    .setBackground(ResourcesCompat.getDrawable(resources, R.drawable.bg_alert_dialog, null))
+                    .setTitle(
+                        HtmlCompat.fromHtml(
+                            "<font color='#FFFFFF''>Discard Changes</font>",
+                            HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
                     )
-                )
-                .setMessage(
-                    Html.fromHtml(
-                        "<font color='#FFFFFF'>All the changes will be discarded.\n" +
-                                "Make Sure to save image to the Gallery.</font>",
-                        Html.FROM_HTML_MODE_LEGACY
+                    .setMessage(
+                        HtmlCompat.fromHtml(
+                            "<font color='#FFFFFF'>All the changes will be discarded.\n" +
+                                    "Make Sure to save image to the Gallery.</font>",
+                            HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
                     )
-                )
-                .setPositiveButton(
-                    Html.fromHtml(
-                        "<font color='#FFFFFF'>Yes</font>",
-                        Html.FROM_HTML_MODE_LEGACY
-                    )
-                ) { dialog, which ->
-                    super.onBackPressed()
-                }
-                .setNegativeButton(
-                    Html.fromHtml(
-                        "<font color='#FFFFFF'>No</font>",
-                        Html.FROM_HTML_MODE_LEGACY
-                    )
-                ) { dialog, which ->
-                    dialog.dismiss()
-                }.show()
-            binding.bottomNavView.visibility = View.GONE
-        } else {
-            binding.bottomNavView.visibility = View.VISIBLE
-            super.onBackPressed()
+                    .setPositiveButton(
+                        HtmlCompat.fromHtml(
+                            "<font color='#FFFFFF'>Yes</font>",
+                            HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
+                    ) { dialog, which ->
+                        super.onBackPressed()
+                    }
+                    .setNegativeButton(
+                        HtmlCompat.fromHtml(
+                            "<font color='#FFFFFF'>No</font>",
+                            HtmlCompat.FROM_HTML_MODE_LEGACY
+                        )
+                    ) { dialog, which ->
+                        dialog.dismiss()
+                    }.show()
+                binding.bottomNavView.visibility = View.GONE
+            }
+            else -> {
+                binding.bottomNavView.visibility = View.VISIBLE
+                super.onBackPressed()
+            }
         }
     }
 }
