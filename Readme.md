@@ -1,3 +1,4 @@
+![QuotesBannerGithub](https://user-images.githubusercontent.com/47470943/183307417-fb4f793b-f21e-4ea2-b4a1-f4d064c878ed.png)
 # ❝ Quotes ❞
 
 **Quotes** is an Android application 📱 built to demonstrate use of *Modern Android development* tools.
@@ -8,9 +9,9 @@
 <!-- [![Quotes App](https://img.shields.io/badge/❝Quotes❞-APK-blue.svg?style=for-the-badge&logo=android&color=blue)](https://github.com/tanmay7715/Quotes/releases/download/v1.0/app-debug.apk) -->
 
 
-<a target="_blank" href="https://play.google.com/store/apps/details?id=com.tanmay.quotes"><img width="175px" src="https://camo.githubusercontent.com/f9dc78b44989eb93046dee0cc745b113ae8f9c2c/68747470733a2f2f7777772e62696e672e636f6d2f74683f69643d4f49502e614b56796e464857494546775079454c6b416473775148614353267069643d4170692672733d31"/></a>
+<a target="_blank" href="https://play.google.com/store/apps/details?id=com.tanmay.quotes"><img width="175px" src=art/playStoreImage.jfif/></a>
  
-![QuotesWorking](art/QuotesApp.gif)
+<!-- ![QuotesWorking](art/QuotesApp.gif) -->
 
 ## About
 It simply loads **Quotes** data from API and shows it inside the quotesfragment.
