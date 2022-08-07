@@ -117,10 +117,12 @@
 
         <!--   Error Rec  -->
         <LinearLayout
+            android:id="@+id/errorLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <TextView
@@ -130,15 +132,14 @@
                 android:layout_marginBottom="6dp"
                 android:text="Unable to fetch the data !"
                 android:textSize="20sp"
-                android:visibility="gone" />
+                />
 
 
             <Button
                 android:id="@+id/btn_retry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Retry"
-                android:visibility="gone" />
+                android:text="Retry" />
 
         </LinearLayout>
 

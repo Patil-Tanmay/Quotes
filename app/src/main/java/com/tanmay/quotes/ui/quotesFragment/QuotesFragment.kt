@@ -12,7 +12,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tanmay.quotes.R
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.databinding.FragmentQuotesBinding
@@ -35,6 +34,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
 //    private lateinit var quotesAdapter1: QuotesAdapter1
 
     private lateinit var genresAdapter: GenreAdapter
+
+    private var isGenreListEmpty = false
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,7 +82,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                 detailedQuotesFragment.arguments = quote
                 parentFragmentManager.beginTransaction()
                     .hide(this)
-                    .add(R.id.fragment_container, detailedQuotesFragment,DETAILQUOTESFRAG).addToBackStack(QUOTESFRAG)
+                    .add(R.id.fragment_container, detailedQuotesFragment, DETAILQUOTESFRAG)
+                    .addToBackStack(QUOTESFRAG)
                     .commit()
             })
 
@@ -89,11 +91,14 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
         setUpQuotesAdapter()
 
         binding.btnRetry.setOnClickListener {
+            if (isGenreListEmpty){
+                viewModel.getQuotesGenres()
+            }
             quotesListing.onRefresh.invoke(null, true)
         }
 
         quotesListing.articles.observeForever {
-                quotesAdapter.submitList(it)
+            quotesAdapter.submitList(it)
         }
 
 //        failed atttempt of manual pagination
@@ -114,7 +119,8 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                             val listOfPagedQuotes = quotesAdapter.currentList?.map { it.quoteText }
                             if (listOfPagedQuotes?.contains(quote.quoteText) == true) {
                                 val index = listOfPagedQuotes.indexOf(quote.quoteText)
-                                quotesAdapter.currentList?.get(index)?.isBookmarked = quote.isBookmarked
+                                quotesAdapter.currentList?.get(index)?.isBookmarked =
+                                    quote.isBookmarked
                                 quotesAdapter.notifyItemChanged(index)
                             }
                         }
@@ -130,6 +136,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                         binding.genreRec.visibility = View.VISIBLE
                         binding.genreText.visibility = View.VISIBLE
                         genresAdapter.submitGenres(it.data!!)
+                        isGenreListEmpty = false
                         binding.shimmerLayoutGenre.visibility = View.GONE
                     }
 
@@ -141,11 +148,10 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                     }
 
                     is Resource.Error -> {
+                        isGenreListEmpty = true
                         binding.genreText.visibility = View.GONE
                         binding.genreRec.visibility = View.GONE
                         binding.shimmerLayoutGenre.visibility = View.GONE
-                        Toast.makeText(context, "Unable to fetch Genres.", Toast.LENGTH_SHORT)
-                            .show()
                     }
                 }
             }
@@ -160,25 +166,25 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
                                 binding.shimmerLayoutQuotes.visibility = View.VISIBLE
                                 binding.recyclerViewQuote.visibility = View.GONE
                                 binding.genreRec.visibility = View.GONE
-                                binding.btnRetry.visibility = View.GONE
+                                binding.errorLayout.visibility = View.GONE
                             }
 
-                            NetworkState.LOADING_NEXT_PAGE ->{
-                                    binding.shimmerLayoutQuotes.visibility = View.GONE
-                                    binding.recyclerViewQuote.visibility = View.VISIBLE
-                                    binding.genreRec.visibility = View.VISIBLE
-                                    binding.btnRetry.visibility = View.GONE
+                            NetworkState.LOADING_NEXT_PAGE -> {
+                                binding.shimmerLayoutQuotes.visibility = View.GONE
+                                binding.recyclerViewQuote.visibility = View.VISIBLE
+                                binding.genreRec.visibility = View.VISIBLE
+                                binding.errorLayout.visibility = View.GONE
                             }
 
                             NetworkState.IDLE -> {
                                 binding.shimmerLayoutQuotes.visibility = View.GONE
                                 binding.recyclerViewQuote.visibility = View.VISIBLE
                                 binding.genreRec.visibility = View.VISIBLE
-                                binding.btnRetry.visibility = View.GONE
+                                binding.errorLayout.visibility = View.GONE
                             }
 
                             else -> {
-                                binding.btnRetry.visibility = View.VISIBLE
+                                binding.errorLayout.visibility = View.VISIBLE
                                 binding.shimmerLayoutQuotes.visibility = View.GONE
                             }
                         }
@@ -282,7 +288,7 @@ class QuotesFragment : Fragment(R.layout.fragment_quotes) {
     }
 
 
-    companion object{
+    companion object {
         const val QUOTESFRAG = "Quotes"
     }
 

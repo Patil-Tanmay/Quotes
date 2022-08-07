@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
 //    private val TAG = "MainActivity_test2"
 
-    private lateinit var navController: NavController
+    private lateinit var  navController: NavController
 
     private lateinit var binding: ActivityMainBinding
 
