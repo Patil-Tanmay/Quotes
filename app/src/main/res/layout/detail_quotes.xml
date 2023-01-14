@@ -7,11 +7,19 @@
     android:backgroundTint="@color/black"
     android:transitionName="detail_quote">
 
+    <ScrollView
+        android:id="@+id/SCROLLER_ID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical"
+        android:layout_marginVertical="80dp"
+        android:fillViewport="true">
     <LinearLayout
         android:id="@+id/imgLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:background="#15202B"
         android:orientation="vertical">
 
@@ -45,6 +53,8 @@
             android:src="@drawable/ic_quote_icon" />
 
     </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/shareLayout"

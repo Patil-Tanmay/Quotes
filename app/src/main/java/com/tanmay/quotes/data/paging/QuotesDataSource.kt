@@ -7,7 +7,9 @@ import com.tanmay.quotes.api.QuotesApi
 import com.tanmay.quotes.data.FetchedQuotesData
 import com.tanmay.quotes.data.QuotesData
 import com.tanmay.quotes.db.QuotesDatabase
+import com.tanmay.quotes.utils.GenreType
 import com.tanmay.quotes.utils.NetworkState
+import com.tanmay.quotes.utils.getType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -50,7 +52,7 @@ class QuotesDataSource(
                             FetchedQuotesData(
                                 _id = qData._id,
                                 quoteAuthor = qData.quoteAuthor,
-                                quoteGenre = qData.quoteGenre,
+                                quoteGenre = checkItISArrayOrNot(qData.quoteGenre),
                                 quoteText = qData.quoteText,
                                 isBookmarked = true
                             )
@@ -58,7 +60,7 @@ class QuotesDataSource(
                             FetchedQuotesData(
                                 _id = qData._id,
                                 quoteAuthor = qData.quoteAuthor,
-                                quoteGenre = qData.quoteGenre,
+                                quoteGenre = checkItISArrayOrNot(qData.quoteGenre),
                                 quoteText = qData.quoteText
                             )
                         }
@@ -109,7 +111,7 @@ class QuotesDataSource(
                             FetchedQuotesData(
                                 _id = qData._id,
                                 quoteAuthor = qData.quoteAuthor,
-                                quoteGenre = qData.quoteGenre,
+                                quoteGenre = checkItISArrayOrNot(qData.quoteGenre),
                                 quoteText = qData.quoteText,
                                 isBookmarked = true
                             )
@@ -117,7 +119,7 @@ class QuotesDataSource(
                             FetchedQuotesData(
                                 _id = qData._id,
                                 quoteAuthor = qData.quoteAuthor,
-                                quoteGenre = qData.quoteGenre,
+                                quoteGenre = checkItISArrayOrNot(qData.quoteGenre),
                                 quoteText = qData.quoteText
                             )
                         }
@@ -128,6 +130,14 @@ class QuotesDataSource(
             } catch (e: Exception) {
                 initLoadState.emit(NetworkState.ERROR)
             }
+        }
+    }
+
+    private fun checkItISArrayOrNot(quoteGenre : Any) : String{
+        return if (quoteGenre.getType() == GenreType.GenreList){
+            if ((quoteGenre as List<*>)[0].toString() == "") "all" else (quoteGenre as List<*>)[0].toString()
+        }else{
+            quoteGenre as String
         }
     }
 

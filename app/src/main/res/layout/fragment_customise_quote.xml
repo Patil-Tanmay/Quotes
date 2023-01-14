@@ -5,64 +5,75 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <LinearLayout
-        android:id="@+id/imgLayout"
+    <ScrollView
+        android:id="@+id/SCROLLER_ID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="#15202B"
-        android:orientation="vertical">
+        android:layout_marginVertical="80dp"
+        android:fillViewport="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical">
 
-        <TextView
-            android:id="@+id/quoteS"
-            android:layout_width= "wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:rotation="180"
-            android:textAlignment="center"
-            android:fontFamily="@font/sfatarian"
-            android:textSize="100sp"
-            android:text="''" />
-
-        <TextView
-            android:id="@+id/quoteText"
+        <LinearLayout
+            android:id="@+id/imgLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:fontFamily="serif-monospace"
-            android:gravity="center"
-            android:textAllCaps="false"
-            android:textSize="19sp"
-            android:textStyle="bold"
-            tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
+            android:background="#15202B"
+            android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/quote_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:fontFamily="serif-monospace"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:visibility="gone"
-            android:textAllCaps="false"
-            android:textSize="19sp"
-            android:textStyle="bold"
-            tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
+            <TextView
+                android:id="@+id/quoteS"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/sfatarian"
+                android:rotation="180"
+                android:text="''"
+                android:textAlignment="center"
+                android:textSize="100sp" />
+
+            <TextView
+                android:id="@+id/quoteText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:fontFamily="serif-monospace"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/quote_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:fontFamily="serif-monospace"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="qagyugasjjsckkjs cjkkcjnjcns njkcsk nckjsn kjcsnkj csj nkjsjnckss sss ssx a jxj ajkdff nkjan xnak sbchjj jj jjj j jjjj jjjjjs " />
 
 
-        <TextView
-            android:id="@+id/quoteE"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="end"
-            android:fontFamily="@font/sfatarian"
-            android:textSize="100sp"
-            android:text="''" />
+            <TextView
+                android:id="@+id/quoteE"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/sfatarian"
+                android:text="''"
+                android:textSize="100sp" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/shareLayout"
@@ -93,24 +104,47 @@
 
     </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/ic_save_to_Gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_margin="1dp"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_file_download" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_right"
-        android:background="@color/black"
+        android:id="@+id/ic_share"
+        android:layout_width="35dp"
+        android:layout_height="36dp"
+        android:backgroundTint="@color/black"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginEnd="30dp"
+        android:layout_gravity="end"
+        android:src="@drawable/ic_share" />
+
+    <ImageButton
+        android:id="@+id/ic_save_to_Gallery"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="20dp"
+        android:backgroundTint="@color/black"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_file_download" />
+
+    </LinearLayout>
+
+
+    <ImageButton
         android:id="@+id/back_button"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/black"
         android:rotation="180"
-        android:layout_margin="12dp"/>
+        android:src="@drawable/ic_arrow_right" />
 
 </FrameLayout>

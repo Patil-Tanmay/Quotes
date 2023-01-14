@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface QuotesApi {
 
     companion object{
-        const val BASE_URL = "https://quote-garden.herokuapp.com/"
+        const val BASE_URL = "https://quotesapi.onrender.com/"
     }
 
     @GET("api/v3/quotes")
